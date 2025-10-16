@@ -1,0 +1,310 @@
+Online alışveriş sepet sistemi pseudocodeu yaz. Yazarken kategoriler arasında gezinmeye, stok kontrolüne, sepeti görme ve düzenlemeye, indirim kodu kullanılabilmesine, min50 TL alisevris olmasina, ödeme yöntemi seçimi olmasına dikkat et
+
+Elbette, istediğiniz tüm özellikleri içeren kapsamlı bir online alışveriş sepeti sistemi için pseudocode (sözde kod) aşağıda adım adım açıklanmıştır. Bu pseudocode, programlama dilinden bağımsız olarak bir alışveriş sitesinin temel mantığını ve akışını ana hatlarıyla belirtir.
+
+### 🛒 Online Alışveriş Sistemi Pseudocode'u
+
+Bu sistem, kullanıcının ürünleri gezip sepete eklemesinden ödemeyi tamamlamasına kadar olan tüm süreci kapsar.
+
+-----
+
+#### **1. Değişkenlerin ve Yapıların Tanımlanması**
+
+```
+BAŞLA
+
+  // Veri yapılarını tanımla
+  TANIMLA Ürün(ürün_id, ad, kategori, fiyat, stok_miktarı)
+  TANIMLA Sepet(ürünler_listesi, toplam_tutar)
+  TANIMLA İndirimKodu(kod, indirim_oranı, minimum_tutar)
+
+  // Gerekli değişkenleri oluştur
+  MevcutKullanıcıSepeti = YENİ Sepet()
+  MinimumSiparişTutarı = 50.00
+  İndirimUygulandı = yanlış
+
+SON
+```
+
+#### **2. Ana Akış ve Kullanıcı Etkileşimleri**
+
+```
+// Kullanıcı siteye girdiğinde ana döngü başlar
+DÖNGÜ (Kullanıcı sitede aktif OLDUĞU SÜRECE)
+
+  // Seçenekleri göster
+  GÖSTER "1: Kategorileri Gezin"
+  GÖSTER "2: Sepeti Görüntüle"
+  GÖSTER "3: Çıkış"
+
+  KullanıcıSeçimi = KULLANICIDAN_AL()
+
+  EĞER KullanıcıSeçimi == "1" İSE
+    ÇAĞIR KategorileriGezin()
+  DEĞİLSE EĞER KullanıcıSeçimi == "2" İSE
+    ÇAĞIR SepetiYönet()
+  DEĞİLSE EĞER KullanıcıSeçimi == "3" İSE
+    DÖNGÜDEN_ÇIK
+  DEĞİLSE
+    GÖSTER "Geçersiz seçim."
+  BİTİR EĞER
+
+SON DÖNGÜ
+```
+
+#### **3. Kategorileri Gezinme ve Ürün Ekleme**
+
+```
+FONKSİYON KategorileriGezin()
+
+  GÖSTER "Kategoriler: Giyim, Elektronik, Kitap"
+  SeçilenKategori = KULLANICIDAN_AL()
+
+  ÜrünleriListele(SeçilenKategori)
+
+  GÖSTER "Eklemek istediğiniz ürünün ID'sini girin (Geri dönmek için 'geri' yazın):"
+  SeçilenÜrünID = KULLANICIDAN_AL()
+
+  EĞER SeçilenÜrünID != "geri" İSE
+    GÖSTER "Adet girin:"
+    Adet = KULLANICIDAN_AL()
+    ÇAĞIR SepeteEkle(SeçilenÜrünID, Adet)
+  BİTİR EĞER
+
+SON FONKSİYON
+
+//-----
+
+FONKSİYON SepeteEkle(ürün_id, adet)
+
+  HedefÜrün = VeritabanındanÜrünüBul(ürün_id)
+
+  // Stok Kontrolü
+  EĞER HedefÜrün != null VE HedefÜrün.stok_miktarı >= adet İSE
+    MevcutKullanıcıSepeti.ürünler_listesi.EKLE({ürün: HedefÜrün, adet: adet})
+    GÖSTER adet + " adet " + HedefÜrün.ad + " sepete eklendi."
+  DEĞİLSE
+    GÖSTER "Stok yetersiz veya ürün bulunamadı."
+  BİTİR EĞER
+
+SON FONKSİYON
+```
+
+#### **4. Sepeti Görüntüleme ve Düzenleme**
+
+```
+FONKSİYON SepetiYönet()
+
+  ÇAĞIR SepetiGörüntüle(MevcutKullanıcıSepeti)
+
+  GÖSTER "1: Ürün Adedi Güncelle"
+  GÖSTER "2: Ürün Sil"
+  GÖSTER "3: İndirim Kodu Kullan"
+  GÖSTER "4: Ödemeye Geç"
+  GÖSTER "5: Alışverişe Devam Et"
+  SepetSeçimi = KULLANICIDAN_AL()
+
+  // Kullanıcı seçimine göre işlem yap
+  EĞER SepetSeçimi == "1" İSE
+    // Adet güncelleme işlemleri...
+  DEĞİLSE EĞER SepetSeçimi == "2" İSE
+    // Ürün silme işlemleri...
+  DEĞİLSE EĞER SepetSeçimi == "3" İSE
+    ÇAĞIR İndirimKoduUygula()
+  DEĞİLSE EĞER SepetSeçimi == "4" İSE
+    ÇAĞIR ÖdemeyeGeç()
+  DEĞİLSE EĞER SepetSeçimi == "5" İSE
+    // Hiçbir şey yapma, ana döngüye dön
+  BİTİR EĞER
+
+SON FONKSİYON
+
+//-----
+
+FONKSİYON SepetiGörüntüle(Sepet)
+
+  GÖSTER "--- SEPETİNİZ ---"
+  EĞER Sepet.ürünler_listesi BOŞ İSE
+    GÖSTER "Sepetiniz boş."
+  DEĞİLSE
+    ToplamTutar = 0
+    HER ÜrünBilgisi İÇİN Sepet.ürünler_listesi
+      AraToplam = ÜrünBilgisi.ürün.fiyat * ÜrünBilgisi.adet
+      GÖSTER ÜrünBilgisi.ürün.ad + " - " + ÜrünBilgisi.adet + " adet - " + AraToplam + " TL"
+      ToplamTutar = ToplamTutar + AraToplam
+    SON HER
+
+    Sepet.toplam_tutar = ToplamTutar
+    GÖSTER "------------------"
+    GÖSTER "Toplam Tutar: " + Sepet.toplam_tutar + " TL"
+  BİTİR EĞER
+
+SON FONKSİYON
+```
+
+#### **5. İndirim Kodu ve Minimum Tutar Kontrolü**
+
+```
+FONKSİYON İndirimKoduUygula()
+
+  EĞER İndirimUygulandı == doğru İSE
+      GÖSTER "Zaten bir indirim kodu kullandınız."
+      DÖN
+  BİTİR EĞER
+  
+  GÖSTER "İndirim kodunu girin:"
+  GirilenKod = KULLANICIDAN_AL()
+
+  KodBilgisi = VeritabanındanKoduBul(GirilenKod)
+
+  EĞER KodBilgisi != null VE MevcutKullanıcıSepeti.toplam_tutar >= KodBilgisi.minimum_tutar İSE
+    İndirimMiktarı = MevcutKullanıcıSepeti.toplam_tutar * KodBilgisi.indirim_oranı
+    MevcutKullanıcıSepeti.toplam_tutar = MevcutKullanıcıSepeti.toplam_tutar - İndirimMiktarı
+    İndirimUygulandı = doğru
+    GÖSTER "İndirim başarıyla uygulandı. Yeni Tutar: " + MevcutKullanıcıSepeti.toplam_tutar + " TL"
+  DEĞİLSE
+    GÖSTER "Geçersiz kod veya minimum sepet tutarı sağlanmadı."
+  BİTİR EĞER
+
+SON FONKSİYON
+```
+
+#### **6. Ödeme İşlemleri**
+
+```
+FONKSİYON ÖdemeyeGeç()
+
+  // Minimum Sipariş Tutarı Kontrolü
+  EĞER MevcutKullanıcıSepeti.toplam_tutar < MinimumSiparişTutarı İSE
+    GÖSTER "Sipariş verebilmek için sepet tutarınız en az " + MinimumSiparişTutarı + " TL olmalıdır."
+    DÖN // Sepet yönetimine geri dön
+  BİTİR EĞER
+
+  GÖSTER "Ödenecek Tutar: " + MevcutKullanıcıSepeti.toplam_tutar + " TL"
+  GÖSTER "Lütfen bir ödeme yöntemi seçin:"
+  GÖSTER "1: Kredi Kartı"
+  GÖSTER "2: Banka Havalesi"
+  ÖdemeSeçimi = KULLANICIDAN_AL()
+
+  EĞER ÖdemeSeçimi == "1" İSE
+    // Kredi kartı bilgilerini al ve işlemi yap
+    GÖSTER "Kredi kartı ile ödeme tamamlandı."
+    ÇAĞIR SiparişiTamamla()
+  DEĞİLSE EĞER ÖdemeSeçimi == "2" İSE
+    // Havale bilgilerini göster
+    GÖSTER "Banka havalesi ile ödeme bekleniyor."
+    ÇAĞIR SiparişiTamamla()
+  DEĞİLSE
+    GÖSTER "Geçersiz ödeme yöntemi."
+  BİTİR EĞER
+
+SON FONKSİYON
+
+//-----
+
+FONKSİYON SiparişiTamamla()
+  
+  // Stokları güncelle
+  HER ÜrünBilgisi İÇİN MevcutKullanıcıSepeti.ürünler_listesi
+      ÜrünBilgisi.ürün.stok_miktarı = ÜrünBilgisi.ürün.stok_miktarı - ÜrünBilgisi.adet
+      VeritabanındaÜrünüGüncelle(ÜrünBilgisi.ürün)
+  SON HER
+
+  GÖSTER "Siparişiniz başarıyla oluşturuldu. Teşekkür ederiz!"
+  MevcutKullanıcıSepeti = YENİ Sepet() // Sepeti sıfırla
+  İndirimUygulandı = yanlış
+
+SON FONKSİYON
+```
+
+Bu pseudocode, belirttiğiniz tüm gereksinimleri (kategori yönetimi, stok kontrolü, sepet düzenleme, indirim kodu, minimum tutar ve ödeme seçenekleri) mantıksal bir akış içinde bir araya getirir. Gerçek bir uygulamada, `Veritabanından...` ile başlayan fonksiyonlar, veritabanı sorgularını temsil edecektir.
+
+Bu yapıyı daha da detaylandırmamı veya belirli bir bölümü (örneğin, stok yönetimi) daha ayrıntılı bir şekilde açıklamamı ister misiniz?
+
+Bunu DOT diline çevir
+
+Elbette, bir önceki adımda oluşturduğumuz online alışveriş sepeti sisteminin pseudocode'unu DOT diline çevirerek bir akış şeması (flowchart) oluşturalım.
+
+Bu DOT kodu, sürecin mantıksal adımlarını ve aralarındaki bağlantıları görselleştirir. Bu kodu Graphviz gibi bir araçta çalıştırarak şemayı `.png` veya `.svg` formatında elde edebilirsiniz.
+
+### DOT Dili Kodu
+
+```dot
+digraph AlisverisSistemi {
+    // Genel Ayarlar
+    rankdir=TB; // Akışı yukarıdan aşağıya doğru ayarla
+    node [shape=box, style="rounded", fontname="Arial"];
+    edge [fontname="Arial"];
+
+    // Düğüm Şekilleri
+    start [label="Başla", shape=ellipse, style=filled, fillcolor=lightblue];
+    end_node [label="Son", shape=ellipse, style=filled, fillcolor=lightblue];
+
+    // Ana Süreç Düğümleri
+    ana_menu [label="Ana Menü\n1: Kategorileri Gez\n2: Sepeti Görüntüle\n3: Çıkış", shape=parallelogram, style=filled, fillcolor=lightyellow];
+    kategorileri_gez [label="Kategorileri ve Ürünleri Göster"];
+    urun_secimi [label="Kullanıcı Ürün ve Adet Seçer", shape=parallelogram, style=filled, fillcolor=lightyellow];
+    sepeti_yonet [label="Sepeti Görüntüle ve Yönet\n1: Adet Güncelle\n2: Ürün Sil\n3: İndirim Kodu Kullan\n4: Ödemeye Geç", shape=parallelogram, style=filled, fillcolor=lightyellow];
+    odeme_yontemi_sec [label="Ödeme Yöntemi Seçimi\n1: Kredi Kartı\n2: Havale", shape=parallelogram, style=filled, fillcolor=lightyellow];
+    siparisi_tamamla [label="Siparişi Tamamla\n- Stokları Güncelle\n- Sepeti Sıfırla"];
+    siparis_basarili [label="Sipariş Başarıyla Oluşturuldu!", shape=note, style=filled, fillcolor=lightgreen];
+
+    // Karar Düğümleri (Diamond Shape)
+    stok_kontrolu [label="Stok Yeterli mi?", shape=diamond, style=filled, fillcolor=orange];
+    min_tutar_kontrolu [label="Sepet Tutarı >= 50 TL mi?", shape=diamond, style=filled, fillcolor=orange];
+    indirim_kodu_kontrolu [label="İndirim Kodu Geçerli mi?", shape=diamond, style=filled, fillcolor=orange];
+
+    // Hata/Bilgi Düğümleri
+    stok_yetersiz [label="Stok Yetersiz!", shape=note, style=filled, fillcolor=lightcoral];
+    min_tutar_yetersiz [label="Minimum Tutar Sağlanmadı!", shape=note, style=filled, fillcolor=lightcoral];
+    gecersiz_kod [label="Geçersiz İndirim Kodu!", shape=note, style=filled, fillcolor=lightcoral];
+    
+    // Akış Bağlantıları
+    start -> ana_menu;
+    ana_menu -> kategorileri_gez [label="Kategorileri Gezin"];
+    ana_menu -> sepeti_yonet [label="Sepeti Görüntüle"];
+    ana_menu -> end_node [label="Çıkış"];
+
+    // Ürün Ekleme Akışı
+    kategorileri_gez -> urun_secimi;
+    urun_secimi -> stok_kontrolu;
+    stok_kontrolu -> kategorileri_gez [label="Evet, Sepete Eklendi"];
+    stok_kontrolu -> stok_yetersiz [label="Hayır"];
+    stok_yetersiz -> kategorileri_gez;
+
+    // Sepet Yönetimi ve Ödeme Akışı
+    sepeti_yonet -> min_tutar_kontrolu [label="Ödemeye Geç"];
+    sepeti_yonet -> ana_menu [label="Alışverişe Devam Et"];
+    
+    // İndirim Kodu Akışı
+    sepeti_yonet -> indirim_kodu_kontrolu [label="İndirim Kodu Kullan"];
+    indirim_kodu_kontrolu -> sepeti_yonet [label="Evet, Uygulandı"];
+    indirim_kodu_kontrolu -> gecersiz_kod [label="Hayır"];
+    gecersiz_kod -> sepeti_yonet;
+    
+    // Ödeme Kontrol Akışı
+    min_tutar_kontrolu -> odeme_yontemi_sec [label="Evet"];
+    min_tutar_kontrolu -> min_tutar_yetersiz [label="Hayır"];
+    min_tutar_yetersiz -> sepeti_yonet;
+
+    // Sipariş Tamamlama Akışı
+    odeme_yontemi_sec -> siparisi_tamamla [label="Yöntem Seçildi"];
+    siparisi_tamamla -> siparis_basarili;
+    siparis_basarili -> end_node;
+}
+```
+
+### Bu Kodu Nasıl Kullanabilirsiniz?
+
+1.  **Metni Kopyalayın:** Yukarıdaki kod bloğunun tamamını kopyalayın.
+2.  **Dosyaya Kaydedin:** Kopyaladığınız metni `alisveris.dot` gibi `.dot` uzantılı bir metin dosyasına yapıştırın ve kaydedin.
+3.  **Görselleştirin:**
+      * **Online Araçlar:** "Graphviz online editor" gibi web sitelerini aratarak bu kodu yapıştırabilir ve anında görsel çıktısını alabilirsiniz.
+      * **Yerel Kurulum:** Bilgisayarınıza [Graphviz](https://graphviz.org/download/) yazılımını kurarak komut satırından aşağıdaki komut ile `.dot` dosyanızı bir resim dosyasına çevirebilirsiniz:
+        ```bash
+        dot -Tpng alisveris.dot -o alisveris_semasi.png
+        ```
+    Bu komut, `alisveris_semasi.png` adında bir resim dosyası oluşturacaktır.
+
+Bu DOT kodu, pseudocode'daki tüm mantıksal adımları (stok kontrolü, minimum tutar kontrolü, indirim kodu vb.) ve kullanıcı akışını net bir şekilde görselleştirir.
+
