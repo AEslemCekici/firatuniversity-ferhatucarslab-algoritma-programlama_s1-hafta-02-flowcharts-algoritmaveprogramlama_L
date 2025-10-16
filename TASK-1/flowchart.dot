@@ -1,0 +1,64 @@
+digraph ATM_ParaCekme_Algoritmasi {
+    // Grafik ayarları
+    rankdir=TB;
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fillcolor="#EFEFEF"];
+    edge [fontname="Helvetica"];
+
+    // Düğüm Tanımları (Node Definitions)
+    Basla [label="Başla", shape=ellipse, fillcolor="#C8E6C9"];
+    SifreGir [label="Kullanıcı Şifre Girer", shape=parallelogram, fillcolor="#BBDEFB"];
+    SifreKontrol [label="Şifre Doğru mu?", shape=diamond, fillcolor="#FFCDD2"];
+    
+    HataSayaciniArtir [label="Hatalı Giriş Sayacını Artır"];
+    HataHakkiKontrol [label="Hatalı Giriş Hakkı < 3 ?", shape=diamond, fillcolor="#FFCDD2"];
+    KartBloke [label="Kart Bloke Edildi\nİşlem Sonlandır", shape=box, fillcolor="#EF5350", fontcolor=white];
+    
+    BakiyeGoster [label="Bakiye Ekranda Gösterilir", shape=note, fillcolor="#FFF9C4"];
+    TutarGir [label="Kullanıcı Tutar Girer", shape=parallelogram, fillcolor="#BBDEFB"];
+    BakiyeKontrol [label="Tutar <= Bakiye ?", shape=diamond, fillcolor="#FFCDD2"];
+    
+    YetersizBakiye [label="Hata: Yetersiz Bakiye\nİşlem Sonlandır", shape=box, fillcolor="#FFAB91"];
+    
+    LimitKontrol [label="Tutar <= Günlük Limit ?", shape=diamond, fillcolor="#FFCDD2"];
+    LimitAsimi [label="Hata: Günlük Limit Aşıldı\nİşlem Sonlandır", shape=box, fillcolor="#FFAB91"];
+    
+    ParayiVer [label="Nakit Para Verilir\nBakiye Güncellenir", fillcolor="#A5D6A7"];
+    FisSor [label="Fiş İsteniyor mu?", shape=diamond, fillcolor="#B39DDB"];
+    FisYazdir [label="Fiş Yazdırılır", shape=note, fillcolor="#FFF9C4"];
+    
+    SonMesaj [label="Kart İade Edilir\n'İyi günler' Mesajı", fillcolor="#CFD8DC"];
+    Bitir [label="Bitir", shape=ellipse, fillcolor="#C8E6C9"];
+
+    // Akış Bağlantıları (Edges)
+    Basla -> SifreGir;
+    
+    // Şifre kontrol döngüsü
+    SifreGir -> SifreKontrol;
+    SifreKontrol -> HataSayaciniArtir [label=" Hayır (Hatalı Şifre)"];
+    HataSayaciniArtir -> HataHakkiKontrol;
+    HataHakkiKontrol -> KartBloke [label=" Hayır (Hak Bitti)"];
+    HataHakkiKontrol -> SifreGir [label=" Evet (Hak Var)"];
+    
+    // Ana işlem akışı
+    SifreKontrol -> BakiyeGoster [label=" Evet (Doğru Şifre)"];
+    BakiyeGoster -> TutarGir;
+    TutarGir -> BakiyeKontrol;
+    
+    BakiyeKontrol -> YetersizBakiye [label=" Hayır"];
+    YetersizBakiye -> SonMesaj;
+    
+    BakiyeKontrol -> LimitKontrol [label=" Evet"];
+    LimitKontrol -> LimitAsimi [label=" Hayır"];
+    LimitAsimi -> SonMesaj;
+    
+    LimitKontrol -> ParayiVer [label=" Evet"];
+    ParayiVer -> FisSor;
+    
+    FisSor -> FisYazdir [label=" Evet"];
+    FisSor -> SonMesaj [label=" Hayır"];
+    FisYazdir -> SonMesaj;
+    
+    // Sonlandırma
+    KartBloke -> Bitir;
+    SonMesaj -> Bitir;
+}
