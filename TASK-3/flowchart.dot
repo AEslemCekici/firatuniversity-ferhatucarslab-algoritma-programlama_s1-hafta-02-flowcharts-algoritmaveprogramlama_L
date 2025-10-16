@@ -1,0 +1,61 @@
+digraph HastaneSistemi {
+    // Genel Ayarlar
+    rankdir=TB; // Akışı yukarıdan aşağıya doğru ayarla
+    node [shape=box, style="rounded", fontname="Arial"];
+    edge [fontname="Arial"];
+
+    // Düğüm Şekilleri ve Stilleri
+    start [label="Başla", shape=ellipse, style=filled, fillcolor=lightblue];
+    end_node [label="Son", shape=ellipse, style=filled, fillcolor=lightblue];
+
+    // Giriş ve Kimlik Doğrulama Düğümleri
+    kimlik_bilgileri_gir [label="Kullanıcı TCKN ve Şifre Girer", shape=parallelogram, style=filled, fillcolor=lightyellow];
+    kimlik_dogrulama [label="Kimlik Doğru mu?", shape=diamond, style=filled, fillcolor=orange];
+    hatali_giris [label="Hatalı Giriş Mesajı", shape=note, style=filled, fillcolor=lightcoral];
+    
+    // Ana Menü Düğümü
+    ana_menu [label="Ana Menü\n1: Randevu\n2: Tahlil\n3: Çıkış", shape=parallelogram, style=filled, fillcolor=lightyellow];
+
+    // Randevu Modülü Düğümleri
+    randevu_islem [label="Doktor ve Saat Seçimi Yapılır"];
+    randevu_onay [label="Randevu Onaylansın mı?", shape=diamond, style=filled, fillcolor=orange];
+    randevu_olustur [label="Randevu Oluşturuldu\nSMS Gönderildi", style=filled, fillcolor=lightgreen];
+    randevu_iptal [label="Randevu İptal Edildi", shape=note];
+
+    // Tahlil Modülü Düğümleri
+    tahlil_sorgula [label="Tahlil Seçimi Yapılır"];
+    sonuc_hazir_mi [label="Sonuç Hazır mı?", shape=diamond, style=filled, fillcolor=orange];
+    sonuc_goster [label="Sonuç Gösterilir\nPDF İndirme Seçeneği Sunulur"];
+    sonuc_hazir_degil [label="'Sonuç Hazır Değil' Mesajı", shape=note];
+    baska_tahlil_sor [label="Başka Tahlil\nSorgulansın mı?", shape=diamond, style=filled, fillcolor=orange];
+
+    // AKIŞ BAĞLANTILARI
+
+    // 1. Giriş Akışı
+    start -> kimlik_bilgileri_gir;
+    kimlik_bilgileri_gir -> kimlik_dogrulama;
+    kimlik_dogrulama -> hatali_giris [label="Hayır"];
+    hatali_giris -> end_node;
+    kimlik_dogrulama -> ana_menu [label="Evet, Başarılı"];
+
+    // 2. Ana Menüden Yönlendirme
+    ana_menu -> randevu_islem [label="1: Randevu İşlemleri"];
+    ana_menu -> tahlil_sorgula [label="2: Tahlil Sonuçları"];
+    ana_menu -> end_node [label="3: Güvenli Çıkış"];
+
+    // 3. Randevu Modülü Akışı
+    randevu_islem -> randevu_onay;
+    randevu_onay -> randevu_olustur [label="Evet"];
+    randevu_onay -> randevu_iptal [label="Hayır"];
+    randevu_olustur -> ana_menu; // İşlem bitince ana menüye dön
+    randevu_iptal -> ana_menu;   // İşlem bitince ana menüye dön
+
+    // 4. Tahlil Modülü Akışı (Döngü içerir)
+    tahlil_sorgula -> sonuc_hazir_mi;
+    sonuc_hazir_mi -> sonuc_goster [label="Evet"];
+    sonuc_hazir_mi -> sonuc_hazir_degil [label="Hayır"];
+    sonuc_goster -> baska_tahlil_sor;
+    sonuc_hazir_degil -> baska_tahlil_sor;
+    baska_tahlil_sor -> tahlil_sorgula [label="Evet"]; // Döngü: Tekrar sorgulama
+    baska_tahlil_sor -> ana_menu [label="Hayır"];      // Döngüden çık, ana menüye dön
+}
