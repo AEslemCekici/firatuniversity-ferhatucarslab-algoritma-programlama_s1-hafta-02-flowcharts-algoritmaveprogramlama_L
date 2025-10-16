@@ -1,0 +1,183 @@
+ATM`den para çekme algoritmasının pseudecodenu yaz.Yazarken şunlara dikkat et.3 hatalı girişte kart bloke olsun.Bakiye sorgulansın.Tutar girişi.Yetersiz bakiye.Günlük çekim limiti.Fiş.
+
+Elbette, ATM'den para çekme işleminin temel adımlarını ve belirttiğiniz kontrol noktalarını içeren algoritmanın pseudocode (sözde kod) halini aşağıda bulabilirsiniz. Bu kod, belirli bir programlama diline bağlı kalmadan, algoritmanın mantığını adımlar halinde açıklar.
+
+### ATM Para Çekme Algoritması (Pseudocode)
+
+```plaintext
+BAŞLA
+
+  // --- Değişkenleri ve Sabitleri Tanımla ---
+  TANIMLA hatali_giris_sayisi = 0
+  TANIMLA MAX_HATALI_GIRIS = 3
+  TANIMLA KULLANICI_HESAP_BAKIYESI = 5000  // Örnek bakiye
+  TANIMLA GUNLUK_CEKIM_LIMITI = 7500      // Örnek limit
+  TANIMLA KART_BLOKE_DURUMU = false
+  TANIMLA DOGRU_SIFRE = "1234"            // Örnek doğru şifre
+
+  // --- Şifre Giriş ve Kontrol Döngüsü ---
+  ÇIKIŞ "Lütfen kartınızı takınız."
+  
+  DÖNGÜ (hatali_giris_sayisi < MAX_HATALI_GIRIS)
+
+    GİRİŞ kullanici_sifre: "Lütfen 4 haneli şifrenizi giriniz:"
+
+    EĞER (kullanici_sifre == DOGRU_SIFRE)
+      hatali_giris_sayisi = 0 // Başarılı girişte sayacı sıfırla
+      DÖNGÜDEN ÇIK // Şifre doğru, döngüyü sonlandır
+    DEĞİLSE
+      hatali_giris_sayisi = hatali_giris_sayisi + 1
+      ÇIKIŞ "Hatalı şifre girdiniz. Kalan deneme hakkınız: " + (MAX_HATALI_GIRIS - hatali_giris_sayisi)
+    SON EĞER
+
+  SON DÖNGÜ
+
+  // --- Kart Bloke Kontrolü ---
+  EĞER (hatali_giris_sayisi == MAX_HATALI_GIRIS)
+    KART_BLOKE_DURUMU = true
+    ÇIKIŞ "3 kez hatalı giriş yaptınız. Kartınız güvenlik nedeniyle bloke edilmiştir."
+    ÇIKIŞ "Lütfen şubeniz ile iletişime geçiniz."
+  DEĞİLSE // İşlemlere devam et
+
+    // --- Bakiye Görüntüleme ve Tutar Girişi ---
+    ÇIKIŞ "Hoş geldiniz."
+    ÇIKIŞ "Hesap Bakiyeniz: " + KULLANICI_HESAP_BAKIYESI + " TL"
+
+    GİRİŞ cekilecek_tutar: "Lütfen çekmek istediğiniz tutarı giriniz:"
+
+    // --- Tutar Kontrolleri ---
+    EĞER (cekilecek_tutar > KULLANICI_HESAP_BAKIYESI)
+      ÇIKIŞ "Yetersiz bakiye. İşleminiz gerçekleştirilemiyor."
+    DEĞİLSE EĞER (cekilecek_tutar > GUNLUK_CEKIM_LIMITI)
+      ÇIKIŞ "Günlük çekim limitini aştınız. İşleminiz gerçekleştirilemiyor."
+    DEĞİLSE // Tüm kontroller başarılı
+      
+      // --- Para Çekme İşlemi ---
+      KULLANICI_HESAP_BAKIYESI = KULLANICI_HESAP_BAKIYESI - cekilecek_tutar
+      ÇIKIŞ "Lütfen paranızı hazneden alınız."
+      ÇIKIŞ "İşleminiz başarıyla tamamlanmıştır."
+      ÇIKIŞ "Kalan Bakiyeniz: " + KULLANICI_HESAP_BAKIYESI + " TL"
+
+      // --- Fiş Talebi ---
+      GİRİŞ fis_isteği: "İşlem fişi istiyor musunuz? (E/H)"
+
+      EĞER (fis_isteği == "E" veya fis_isteği == "e")
+        ÇIKIŞ "Fişiniz yazdırılıyor. Lütfen bekleyiniz."
+      SON EĞER
+
+    SON EĞER
+
+  SON EĞER
+
+  // --- Son Mesaj ---
+  ÇIKIŞ "İyi günler dileriz. Lütfen kartınızı almayı unutmayınız."
+
+BİTİR
+```
+
+-----
+
+### 🧐 Algoritmanın Açıklaması
+
+1.  **Başlatma:** Gerekli değişkenler (hatalı giriş sayacı, bakiye, limit vb.) tanımlanır.
+2.  **Şifre Kontrolü:**
+      * Kullanıcıdan şifre girmesi istenir.
+      * Girilen şifre, `DÖNGÜ` içinde en fazla 3 kez kontrol edilir.
+      * **Doğru şifrede:** Döngüden çıkılır ve işlemin ana kısmına geçilir.
+      * **Yanlış şifrede:** Hatalı giriş sayacı bir artırılır ve kullanıcıya kalan deneme hakkı bildirilir.
+3.  **Kart Bloke:** Döngü bittiğinde, `hatali_giris_sayisi` 3'e ulaştıysa kartın bloke olduğuna dair bir mesaj gösterilir ve algoritma sonlandırılır.
+4.  **Bakiye ve Tutar:** Şifre doğruysa, kullanıcıya mevcut bakiyesi gösterilir ve çekmek istediği tutar sorulur.
+5.  **Kontroller:**
+      * **Yetersiz Bakiye:** İstenen tutar, hesap bakiyesinden büyük mü diye kontrol edilir. Büyükse, uyarı verilir.
+      * **Günlük Limit:** İstenen tutar, günlük çekim limitini aşıyor mu diye kontrol edilir. Aşıyorsa, uyarı verilir.
+6.  **Para Çekme:** Tüm kontrollerden geçerse, para çekme işlemi gerçekleştirilir, yeni bakiye hesaplanır ve kullanıcıya bildirilir.
+7.  **Fiş:** Kullanıcıya fiş isteyip istemediği sorulur ve cevabına göre işlem yapılır.
+8.  **Sonlandırma:** İşlem tamamlandığında kullanıcıya kartını alması hatırlatılır ve algoritma son bulur.
+
+Bu algoritmayı DOT dilinde yaz
+
+Elbette, bir önceki adımda oluşturulan ATM para çekme algoritmasının akışını görselleştirmek için kullanılan **DOT dilindeki** kodunu aşağıda bulabilirsiniz.
+
+Bu kodu Graphviz gibi bir araçla çalıştırdığınızda, algoritmanın mantıksal akış şeması (flowchart) oluşacaktır.
+
+### DOT Dili Kodu
+
+```dot
+digraph ATM_ParaCekme_Algoritmasi {
+    // Grafik ayarları
+    rankdir=TB;
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fillcolor="#EFEFEF"];
+    edge [fontname="Helvetica"];
+
+    // Düğüm Tanımları (Node Definitions)
+    Basla [label="Başla", shape=ellipse, fillcolor="#C8E6C9"];
+    SifreGir [label="Kullanıcı Şifre Girer", shape=parallelogram, fillcolor="#BBDEFB"];
+    SifreKontrol [label="Şifre Doğru mu?", shape=diamond, fillcolor="#FFCDD2"];
+    
+    HataSayaciniArtir [label="Hatalı Giriş Sayacını Artır"];
+    HataHakkiKontrol [label="Hatalı Giriş Hakkı < 3 ?", shape=diamond, fillcolor="#FFCDD2"];
+    KartBloke [label="Kart Bloke Edildi\nİşlem Sonlandır", shape=box, fillcolor="#EF5350", fontcolor=white];
+    
+    BakiyeGoster [label="Bakiye Ekranda Gösterilir", shape=note, fillcolor="#FFF9C4"];
+    TutarGir [label="Kullanıcı Tutar Girer", shape=parallelogram, fillcolor="#BBDEFB"];
+    BakiyeKontrol [label="Tutar <= Bakiye ?", shape=diamond, fillcolor="#FFCDD2"];
+    
+    YetersizBakiye [label="Hata: Yetersiz Bakiye\nİşlem Sonlandır", shape=box, fillcolor="#FFAB91"];
+    
+    LimitKontrol [label="Tutar <= Günlük Limit ?", shape=diamond, fillcolor="#FFCDD2"];
+    LimitAsimi [label="Hata: Günlük Limit Aşıldı\nİşlem Sonlandır", shape=box, fillcolor="#FFAB91"];
+    
+    ParayiVer [label="Nakit Para Verilir\nBakiye Güncellenir", fillcolor="#A5D6A7"];
+    FisSor [label="Fiş İsteniyor mu?", shape=diamond, fillcolor="#B39DDB"];
+    FisYazdir [label="Fiş Yazdırılır", shape=note, fillcolor="#FFF9C4"];
+    
+    SonMesaj [label="Kart İade Edilir\n'İyi günler' Mesajı", fillcolor="#CFD8DC"];
+    Bitir [label="Bitir", shape=ellipse, fillcolor="#C8E6C9"];
+
+    // Akış Bağlantıları (Edges)
+    Basla -> SifreGir;
+    
+    // Şifre kontrol döngüsü
+    SifreGir -> SifreKontrol;
+    SifreKontrol -> HataSayaciniArtir [label=" Hayır (Hatalı Şifre)"];
+    HataSayaciniArtir -> HataHakkiKontrol;
+    HataHakkiKontrol -> KartBloke [label=" Hayır (Hak Bitti)"];
+    HataHakkiKontrol -> SifreGir [label=" Evet (Hak Var)"];
+    
+    // Ana işlem akışı
+    SifreKontrol -> BakiyeGoster [label=" Evet (Doğru Şifre)"];
+    BakiyeGoster -> TutarGir;
+    TutarGir -> BakiyeKontrol;
+    
+    BakiyeKontrol -> YetersizBakiye [label=" Hayır"];
+    YetersizBakiye -> SonMesaj;
+    
+    BakiyeKontrol -> LimitKontrol [label=" Evet"];
+    LimitKontrol -> LimitAsimi [label=" Hayır"];
+    LimitAsimi -> SonMesaj;
+    
+    LimitKontrol -> ParayiVer [label=" Evet"];
+    ParayiVer -> FisSor;
+    
+    FisSor -> FisYazdir [label=" Evet"];
+    FisSor -> SonMesaj [label=" Hayır"];
+    FisYazdir -> SonMesaj;
+    
+    // Sonlandırma
+    KartBloke -> Bitir;
+    SonMesaj -> Bitir;
+}
+```
+
+-----
+
+### 💻 Bu Kodu Nasıl Kullanabilirsiniz?
+
+1.  **Online Editörler:** En kolay yöntem, bu kodu kopyalayıp [**Graphviz Online**](https://dreampuf.github.io/GraphvizOnline) veya benzeri bir web sitesine yapıştırmaktır. Grafik anında oluşturulacaktır.
+2.  **Yerel Kurulum:** Eğer bilgisayarınızda [**Graphviz**](https://graphviz.org/download/) yazılımı kuruluysa, bu kodu `.dot` uzantılı bir dosyaya (örneğin, `atm.dot`) kaydedip komut satırından aşağıdaki gibi bir komutla PNG, SVG veya PDF formatında bir resme dönüştürebilirsiniz:
+    ```bash
+    dot -Tpng atm.dot -o atm_akisi.png
+    ```
+
+Bu DOT kodu, algoritmanın tüm karar noktalarını (şifre doğruluğu, bakiye, limit), döngülerini (hatalı şifre girişi) ve adımlarını net bir şekilde gösteren görsel bir şema üretecektir.
+
