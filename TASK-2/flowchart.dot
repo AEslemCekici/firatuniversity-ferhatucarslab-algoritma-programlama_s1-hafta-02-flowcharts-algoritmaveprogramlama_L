@@ -1,0 +1,62 @@
+digraph AlisverisSistemi {
+    // Genel Ayarlar
+    rankdir=TB; // Akışı yukarıdan aşağıya doğru ayarla
+    node [shape=box, style="rounded", fontname="Arial"];
+    edge [fontname="Arial"];
+
+    // Düğüm Şekilleri
+    start [label="Başla", shape=ellipse, style=filled, fillcolor=lightblue];
+    end_node [label="Son", shape=ellipse, style=filled, fillcolor=lightblue];
+
+    // Ana Süreç Düğümleri
+    ana_menu [label="Ana Menü\n1: Kategorileri Gez\n2: Sepeti Görüntüle\n3: Çıkış", shape=parallelogram, style=filled, fillcolor=lightyellow];
+    kategorileri_gez [label="Kategorileri ve Ürünleri Göster"];
+    urun_secimi [label="Kullanıcı Ürün ve Adet Seçer", shape=parallelogram, style=filled, fillcolor=lightyellow];
+    sepeti_yonet [label="Sepeti Görüntüle ve Yönet\n1: Adet Güncelle\n2: Ürün Sil\n3: İndirim Kodu Kullan\n4: Ödemeye Geç", shape=parallelogram, style=filled, fillcolor=lightyellow];
+    odeme_yontemi_sec [label="Ödeme Yöntemi Seçimi\n1: Kredi Kartı\n2: Havale", shape=parallelogram, style=filled, fillcolor=lightyellow];
+    siparisi_tamamla [label="Siparişi Tamamla\n- Stokları Güncelle\n- Sepeti Sıfırla"];
+    siparis_basarili [label="Sipariş Başarıyla Oluşturuldu!", shape=note, style=filled, fillcolor=lightgreen];
+
+    // Karar Düğümleri (Diamond Shape)
+    stok_kontrolu [label="Stok Yeterli mi?", shape=diamond, style=filled, fillcolor=orange];
+    min_tutar_kontrolu [label="Sepet Tutarı >= 50 TL mi?", shape=diamond, style=filled, fillcolor=orange];
+    indirim_kodu_kontrolu [label="İndirim Kodu Geçerli mi?", shape=diamond, style=filled, fillcolor=orange];
+
+    // Hata/Bilgi Düğümleri
+    stok_yetersiz [label="Stok Yetersiz!", shape=note, style=filled, fillcolor=lightcoral];
+    min_tutar_yetersiz [label="Minimum Tutar Sağlanmadı!", shape=note, style=filled, fillcolor=lightcoral];
+    gecersiz_kod [label="Geçersiz İndirim Kodu!", shape=note, style=filled, fillcolor=lightcoral];
+    
+    // Akış Bağlantıları
+    start -> ana_menu;
+    ana_menu -> kategorileri_gez [label="Kategorileri Gezin"];
+    ana_menu -> sepeti_yonet [label="Sepeti Görüntüle"];
+    ana_menu -> end_node [label="Çıkış"];
+
+    // Ürün Ekleme Akışı
+    kategorileri_gez -> urun_secimi;
+    urun_secimi -> stok_kontrolu;
+    stok_kontrolu -> kategorileri_gez [label="Evet, Sepete Eklendi"];
+    stok_kontrolu -> stok_yetersiz [label="Hayır"];
+    stok_yetersiz -> kategorileri_gez;
+
+    // Sepet Yönetimi ve Ödeme Akışı
+    sepeti_yonet -> min_tutar_kontrolu [label="Ödemeye Geç"];
+    sepeti_yonet -> ana_menu [label="Alışverişe Devam Et"];
+    
+    // İndirim Kodu Akışı
+    sepeti_yonet -> indirim_kodu_kontrolu [label="İndirim Kodu Kullan"];
+    indirim_kodu_kontrolu -> sepeti_yonet [label="Evet, Uygulandı"];
+    indirim_kodu_kontrolu -> gecersiz_kod [label="Hayır"];
+    gecersiz_kod -> sepeti_yonet;
+    
+    // Ödeme Kontrol Akışı
+    min_tutar_kontrolu -> odeme_yontemi_sec [label="Evet"];
+    min_tutar_kontrolu -> min_tutar_yetersiz [label="Hayır"];
+    min_tutar_yetersiz -> sepeti_yonet;
+
+    // Sipariş Tamamlama Akışı
+    odeme_yontemi_sec -> siparisi_tamamla [label="Yöntem Seçildi"];
+    siparisi_tamamla -> siparis_basarili;
+    siparis_basarili -> end_node;
+}
