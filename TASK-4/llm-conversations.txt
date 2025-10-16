@@ -1,0 +1,589 @@
+Öğrenci no ve şifresiyle giriş yapılan. Ders listesinin görülebileceği. Her ders için kontenjan konstrolü,ön koşul dersi kontrolü, ders saati çakışması kontrolü, ders kredi limiti(35)kontrolü yapan(koşullu),ders ekleme çıkarma döngüsü olan bir sistemin pseudocodenu yaz 
+
+Elbette, öğrenci ders kayıt sistemi için istenen tüm kontrolleri içeren detaylı pseudocode (sözde kod) aşağıdadır.
+
+### 📚 Ders Kayıt Sistemi Pseudocode'u
+
+Bu pseudocode, bir öğrencinin sisteme giriş yapmasından derslerini seçip kaydını tamamlamasına kadar olan süreci adım adım tanımlar.
+
+-----
+
+**BAŞLA**
+
+**1. // Değişken ve Sabit Tanımlamaları**
+`TANIMLA ogrenciNo, sifre: METİN`
+`TANIMLA girisDenemeSayisi: TAMSAYI = 0`
+`TANIMLA girisBasarili: MANTIKSAL = YANLIŞ`
+`TANIMLA KREDI_LIMITI: SABİT TAMSAYI = 35`
+`TANIMLA secilenDersler: DERS_LİSTESİ`
+`TANIMLA toplamKredi: TAMSAYI = 0`
+`TANIMLA kullaniciSecimi: METİN`
+
+**2. // Kullanıcı Giriş Döngüsü**
+`DÖNGÜ (girisDenemeSayisi < 3 VE girisBasarili == YANLIŞ)`
+`YAZ "Öğrenci Numaranızı Giriniz:"`
+`OKU ogrenciNo`
+`YAZ "Şifrenizi Giriniz:"`
+`OKU sifre`
+
+```
+  `// Veritabanı veya sistemden kullanıcı doğrulaması yapılır`
+  `EĞER (ogrenciNo ve sifre DOĞRU) ISE`
+     `girisBasarili = DOĞRU`
+     `YAZ "Giriş Başarılı!"`
+  `DEĞİLSE`
+     `girisDenemeSayisi = girisDenemeSayisi + 1`
+     `YAZ "Hatalı giriş. Kalan deneme hakkı: " + (3 - girisDenemeSayisi)`
+  `SON EĞER`
+```
+
+`SON DÖNGÜ`
+
+**3. // Giriş Başarısına Göre Ana İşlem Bloğu**
+`EĞER (girisBasarili == DOĞRU) ISE`
+`// Mevcut seçili dersleri ve kredi toplamını yükle`
+`secilenDersler = OgrencininMevcutDersleriniGetir(ogrenciNo)`
+`toplamKredi = SeciliDerslerinKredisiniHesapla(secilenDersler)`
+
+```
+  `DÖNGÜ (kullaniciSecimi != "4")`
+     `YAZ "--- Ders Kayıt Menüsü ---"`
+     `YAZ "Seçili Ders Sayısı: " + secilenDersler.sayisi()`
+     `YAZ "Toplam Kredi: " + toplamKredi + " / " + KREDI_LIMITI`
+     `YAZ "1. Mevcut Dersleri Görüntüle"`
+     `YAZ "2. Ders Ekle"`
+     `YAZ "3. Ders Çıkar"`
+     `YAZ "4. Çıkış Yap"`
+     `OKU kullaniciSecimi`
+
+     **SEÇİM DURUMU (kullaniciSecimi)**
+
+        **DURUM "1":** `// Mevcut Dersleri Listeleme`
+           `YAZ "--- Seçili Dersleriniz ---"`
+           `EĞER (secilenDersler BOŞ) ISE`
+              `YAZ "Henüz ders seçmediniz."`
+           `DEĞİLSE`
+              `HER ders İÇİN secilenDersler:`
+                 `YAZ ders.kodu + " - " + ders.adi`
+              `SON HER`
+           `SON EĞER`
+
+        **DURUM "2":** `// Ders Ekleme Bloğu`
+           `TumDersleriListele()`
+           `YAZ "Eklemek istediğiniz dersin kodunu giriniz:"`
+           `OKU eklenecekDersKodu`
+           `hedefDers = DersBilgisiniGetir(eklenecekDersKodu)`
+
+           `// --- KONTROLLER BAŞLANGIÇ ---`
+           `kontenjanUygun = (hedefDers.doluKontenjan < hedefDers.kontenjan)`
+           `onKosulAlinmis = OnKosulKontroluYap(ogrenciNo, hedefDers.onKosullari)`
+           `cakismaVar = DersSaatiCakismasiVarMi(hedefDers, secilenDersler)`
+           `krediLimitiAsiliyor = (toplamKredi + hedefDers.kredi > KREDI_LIMITI)`
+
+           `// --- KONTROLLER BİTİŞ ---`
+
+           `EĞER (kontenjanUygun == YANLIŞ) ISE`
+              `YAZ "HATA: Dersin kontenjanı dolu."`
+           `DEĞİLSE EĞER (onKosulAlinmis == YANLIŞ) ISE`
+              `YAZ "HATA: Bu dersin ön koşul derslerini tamamlamadınız."`
+           `DEĞİLSE EĞER (cakismaVar == DOĞRU) ISE`
+              `YAZ "HATA: Ders saati başka bir dersinizle çakışıyor."`
+           `DEĞİLSE EĞER (krediLimitiAsiliyor == DOĞRU) ISE`
+              `YAZ "HATA: Bu dersi eklerseniz kredi limitini (" + KREDI_LIMITI + ") aşıyorsunuz."`
+           `DEĞİLSE`
+              `secilenDersler.ekle(hedefDers)`
+              `toplamKredi = toplamKredi + hedefDers.kredi`
+              `YAZ hedefDers.adi + " dersi başarıyla eklendi."`
+           `SON EĞER`
+
+        **DURUM "3":** `// Ders Çıkarma Bloğu`
+           `YAZ "Çıkarmak istediğiniz dersin kodunu giriniz:"`
+           `OKU cikarilacakDersKodu`
+
+           `EĞER (secilenDersler.iceriyor(cikarilacakDersKodu)) ISE`
+              `cikarilanDers = secilenDersler.getir(cikarilacakDersKodu)`
+              `secilenDersler.sil(cikarilacakDersKodu)`
+              `toplamKredi = toplamKredi - cikarilanDers.kredi`
+              `YAZ cikarilanDers.adi + " dersi başarıyla çıkarıldı."`
+           `DEĞİLSE`
+              `YAZ "HATA: Bu kodda bir ders seçmemişsiniz."`
+           `SON EĞER`
+
+        **DURUM "4":** `// Çıkış`
+           `YAZ "İşlemler kaydedildi. Sistemden çıkılıyor..."`
+
+        **VARSAYILAN:**
+           `YAZ "Geçersiz seçim. Lütfen menüden bir seçenek giriniz."`
+
+     **SON SEÇİM DURUMU**
+  `SON DÖNGÜ`
+```
+
+`DEĞİLSE`
+`YAZ "3 hatalı deneme yaptınız. Hesabınız güvenlik amacıyla kilitlendi."`
+`SON EĞER`
+
+**BİTİR**
+
+-----
+
+Umarım bu pseudocode, geliştirmek istediğiniz sistemi tasarlamanıza yardımcı olur. Başka bir algoritma veya pseudocode isteğiniz olursa çekinmeden sorabilirsiniz.
+
+bu sistemi tek bir pseudocodeda topla ve danışman onayı gerekli mi koşulu ve kayıt geçmişi ve onaylanma durumunu gösterecek şekilde yenile
+
+Elbette, istediğiniz eklemeleri (danışman onayı, kayıt geçmişi, onay durumu) içeren ve tek bir bütünleşik yapıdaki yenilenmiş pseudocode aşağıdadır.
+
+### 📚 Gelişmiş Ders Kayıt Sistemi Pseudocode'u
+
+Bu pseudocode, önceki versiyona ek olarak danışman onayı mekanizmasını, kayıt geçmişini ve onay durumunu da içermektedir.
+
+-----
+
+**BAŞLA**
+
+**1. // Değişken ve Sabit Tanımlamaları**
+`TANIMLA ogrenciNo, sifre, kullaniciSecimi: METİN`
+`TANIMLA girisDenemeSayisi: TAMSAYI = 0`
+`TANIMLA girisBasarili: MANTIKSAL = YANLIŞ`
+`TANIMLA KREDI_LIMITI: SABİT TAMSAYI = 35`
+
+`// Öğrenciye özel veriler`
+`TANIMLA secilenDersler: DERS_LİSTESİ`
+`TANIMLA toplamKredi: TAMSAYI`
+`TANIMLA kayitOnayDurumu: METİN`  // Örnek: "Taslak", "Danışman Onayı Bekliyor", "Onaylandı", "Reddedildi"
+`TANIMLA danismanOnayiGerekli: MANTIKSAL`
+`TANIMLA kayitGecmisi: KAYIT_GEÇMİŞİ_LİSTESİ`
+
+**2. // Kullanıcı Giriş Prosedürü**
+`DÖNGÜ (girisDenemeSayisi < 3 VE girisBasarili == YANLIŞ)`
+`YAZ "Öğrenci Numaranızı Giriniz:"`
+`OKU ogrenciNo`
+`YAZ "Şifrenizi Giriniz:"`
+`OKU sifre`
+
+```
+  `EĞER (KullaniciDogrula(ogrenciNo, sifre) == DOĞRU) ISE`
+     `girisBasarili = DOĞRU`
+     `YAZ "Giriş Başarılı!"`
+  `DEĞİLSE`
+     `girisDenemeSayisi = girisDenemeSayisi + 1`
+     `YAZ "Hatalı giriş. Kalan deneme hakkı: " + (3 - girisDenemeSayisi)`
+  `SON EĞER`
+```
+
+`SON DÖNGÜ`
+
+**3. // Ana İşlem Bloğu**
+`EĞER (girisBasarili == DOĞRU) ISE`
+`// Giriş sonrası öğrenci verilerini sistemden yükle`
+`secilenDersler = OgrencininMevcutDersleriniGetir(ogrenciNo)`
+`toplamKredi = SeciliDerslerinKredisiniHesapla(secilenDersler)`
+`kayitOnayDurumu = OgrencininOnayDurumunuGetir(ogrenciNo)`
+`kayitGecmisi = OgrencininKayitGecmisiniGetir(ogrenciNo)`
+
+```
+  `// Danışman onayı gerekip gerekmediğini kontrol et`
+  `danismanOnayiGerekli = (toplamKredi > KREDI_LIMITI)`
+
+  `DÖNGÜ (kullaniciSecimi != "5")`
+     `YAZ "\n--- Ana Menü ---"`
+     `YAZ "Onay Durumu: " + kayitOnayDurumu`
+     `YAZ "Toplam Kredi: " + toplamKredi + " / " + KREDI_LIMITI`
+     `EĞER (danismanOnayiGerekli) ISE`
+        `YAZ "UYARI: Kredi limitini aştığınız için danışman onayı gereklidir."`
+     `SON EĞER`
+     `YAZ "1. Ders Ekle / Çıkar"`
+     `YAZ "2. Seçili Dersleri ve Durumu Görüntüle"`
+     `YAZ "3. Kayıt Geçmişini Görüntüle"`
+     `YAZ "4. Kaydı Onaya Gönder"`
+     `YAZ "5. Çıkış Yap"`
+     `OKU kullaniciSecimi`
+
+     **SEÇİM DURUMU (kullaniciSecimi)**
+
+        **DURUM "1":** `// Ders Ekleme / Çıkarma Alt Menüsü`
+           `YAZ "   a) Ders Ekle"`
+           `YAZ "   b) Ders Çıkar"`
+           `OKU altSecim`
+           `EĞER (altSecim == "a") ISE`
+              `TumDersleriListele()`
+              `YAZ "Eklemek istediğiniz dersin kodunu giriniz:"`
+              `OKU eklenecekDersKodu`
+              `hedefDers = DersBilgisiniGetir(eklenecekDersKodu)`
+
+              `// Kontroller (Kontenjan, Ön Koşul, Çakışma)`
+              `EĞER (KontrolleriGeciyorMu(ogrenciNo, hedefDers, secilenDersler))`
+                 `secilenDersler.ekle(hedefDers)`
+                 `// Her değişiklikten sonra durumu ve kredi toplamını güncelle`
+                 `toplamKredi = toplamKredi + hedefDers.kredi`
+                 `kayitOnayDurumu = "Taslak (Değişiklik Yapıldı)"`
+                 `danismanOnayiGerekli = (toplamKredi > KREDI_LIMITI)`
+                 `YAZ hedefDers.adi + " dersi eklendi."`
+              `DEĞİLSE`
+                 `YAZ "HATA: Ders eklenemedi. Kontrolleri (kontenjan, ön koşul, çakışma) tekrar gözden geçirin."`
+              `SON EĞER`
+           `DEĞİLSE EĞER (altSecim == "b") ISE`
+              `YAZ "Çıkarmak istediğiniz dersin kodunu giriniz:"`
+              `OKU cikarilacakDersKodu`
+              `EĞER (secilenDersler.iceriyor(cikarilacakDersKodu)) ISE`
+                 `cikarilanDers = secilenDersler.getir(cikarilacakDersKodu)`
+                 `secilenDersler.sil(cikarilacakDersKodu)`
+                  `// Her değişiklikten sonra durumu ve kredi toplamını güncelle`
+                 `toplamKredi = toplamKredi - cikarilanDers.kredi`
+                 `kayitOnayDurumu = "Taslak (Değişiklik Yapıldı)"`
+                 `danismanOnayiGerekli = (toplamKredi > KREDI_LIMITI)`
+                 `YAZ cikarilanDers.adi + " dersi çıkarıldı."`
+              `DEĞİLSE`
+                 `YAZ "HATA: Bu kodda bir ders seçmemişsiniz."`
+              `SON EĞER`
+           `SON EĞER`
+
+        **DURUM "2":** `// Seçili Dersleri ve Durumu Görüntüleme`
+           `YAZ "--- Güncel Kayıt Durumu ---"`
+           `YAZ "Onay Durumu: " + kayitOnayDurumu`
+           `EĞER (secilenDersler BOŞ) ISE`
+              `YAZ "Henüz ders seçmediniz."`
+           `DEĞİLSE`
+              `YAZ "--- Seçili Dersler ---"`
+              `HER ders İÇİN secilenDersler: YAZ ders.kodu + " - " + ders.adi`
+           `SON EĞER`
+
+        **DURUM "3":** `// Kayıt Geçmişini Görüntüleme`
+           `YAZ "--- Geçmiş Dönem Kayıtları ---"`
+           `EĞER (kayitGecmisi BOŞ) ISE`
+              `YAZ "Görüntülenecek geçmiş kayıt bulunmuyor."`
+           `DEĞİLSE`
+              `HER gecmisKayit İÇİN kayitGecmisi:`
+                 `YAZ "Dönem: " + gecmisKayit.donem + " | Toplam Kredi: " + gecmisKayit.kredi + " | Durum: " + gecmisKayit.onayDurumu`
+              `SON HER`
+           `SON EĞER`
+
+        **DURUM "4":** `// Kaydı Onaya Gönderme`
+           `EĞER (danismanOnayiGerekli == DOĞRU) ISE`
+              `kayitOnayDurumu = "Danışman Onayı Bekliyor"`
+              `YAZ "Kayıt, danışman onayına gönderildi. Toplam kredi limiti aşıldı."`
+           `DEĞİLSE`
+              `kayitOnayDurumu = "Onaylandı"`
+              `YAZ "Kredi limiti aşılmadığı için kayıt otomatik olarak onaylandı."`
+           `SON EĞER`
+           `KayitBilgileriniVeritabaninaYaz(ogrenciNo, secilenDersler, kayitOnayDurumu)`
+           `YAZ "İşleminiz tamamlandı."`
+
+        **DURUM "5":** `// Çıkış`
+           `YAZ "Sistemden çıkılıyor..."`
+
+        **VARSAYILAN:**
+           `YAZ "Geçersiz seçim. Lütfen menüden bir seçenek giriniz."`
+     **SON SEÇİM DURUMU**
+  `SON DÖNGÜ`
+```
+
+`DEĞİLSE`
+`YAZ "3 hatalı deneme yaptınız. Hesabınız güvenlik amacıyla kilitlendi."`
+`SON EĞER`
+
+**BİTİR**
+
+bu sistem için tek bir pseudocode yaz
+
+Elbette, bahsettiğiniz ders kayıt sisteminin tüm işlevlerini (giriş, ders ekleme/çıkarma, kontroller, danışman onayı ve kayıt geçmişi) tek bir bütünleşik pseudocode yapısı içinde aşağıda bulabilirsiniz.
+
+### النهائية Ders Kayıt Sistemi Pseudocode'u
+
+```plaintext
+BAŞLA
+
+// --- SİSTEM DEĞİŞKENLERİ VE SABİTLER ---
+TANIMLA ogrenciNo, sifre, kullaniciSecimi: METİN
+TANIMLA girisBasarili: MANTIKSAL = YANLIŞ
+TANIMLA KREDI_LIMITI: SABİT TAMSAYI = 35
+
+// --- ÖĞRENCİYE ÖZEL YÜKLENECEK VERİLER ---
+TANIMLA secilenDersler: DERS_LİSTESİ
+TANIMLA toplamKredi: TAMSAYI
+TANIMLA kayitOnayDurumu: METİN // Örnek: "Taslak", "Onay Bekliyor", "Onaylandı"
+TANIMLA kayitGecmisi: LİSTE
+
+// --- ADIM 1: KULLANICI GİRİŞİ ---
+TANIMLA girisDenemeSayisi: TAMSAYI = 0
+DÖNGÜ (girisDenemeSayisi < 3 VE girisBasarili == YANLIŞ)
+    YAZ "Öğrenci Numarası:"
+    OKU ogrenciNo
+    YAZ "Şifre:"
+    OKU sifre
+
+    EĞER (SistemdeKullaniciDogruMu(ogrenciNo, sifre)) ISE
+        girisBasarili = DOĞRU
+        YAZ "Giriş Başarılı!"
+    DEĞİLSE
+        girisDenemeSayisi = girisDenemeSayisi + 1
+        YAZ "Hatalı giriş. Kalan hak: " + (3 - girisDenemeSayisi)
+    SON EĞER
+SON DÖNGÜ
+
+// --- ADIM 2: ANA İŞLEM DÖNGÜSÜ ---
+EĞER (girisBasarili == DOĞRU) ISE
+    // Öğrencinin verilerini sistemden yükle
+    secilenDersler = VeritabanindanDersleriGetir(ogrenciNo)
+    toplamKredi = KrediHesapla(secilenDersler)
+    kayitOnayDurumu = OnayDurumuGetir(ogrenciNo)
+    kayitGecmisi = GecmisKayitlariGetir(ogrenciNo)
+
+    // Ana menü döngüsü
+    DÖNGÜ (kullaniciSecimi != "5")
+        YAZ "\n--- DERS KAYIT SİSTEMİ ---"
+        YAZ "Onay Durumu: " + kayitOnayDurumu + " | Toplam Kredi: " + toplamKredi
+        EĞER (toplamKredi > KREDI_LIMITI) ISE
+            YAZ "UYARI: Kredi limiti aşıldı, danışman onayı gerekli."
+        SON EĞER
+        YAZ "1. Ders Ekle"
+        YAZ "2. Ders Çıkar"
+        YAZ "3. Kayıt Geçmişini Görüntüle"
+        YAZ "4. Kaydı Tamamla ve Onaya Gönder"
+        YAZ "5. Çıkış Yap"
+        OKU kullaniciSecimi
+
+        SEÇİM DURUMU (kullaniciSecimi)
+            DURUM "1": // Ders Ekle
+                TumAcilanDersleriGoster()
+                YAZ "Eklenecek dersin kodunu girin:"
+                OKU eklenecekKod
+                hedefDers = DersBilgisiniBul(eklenecekKod)
+
+                // Tüm kontroller tek bir mantıksal sorguda birleştirilir
+                kontenjanUygun = (hedefDers.doluKontenjan < hedefDers.kontenjan)
+                onKosulTamam = OnKosulSaglandiMi(ogrenciNo, hedefDers.onKosul)
+                cakismaYok = CakismiyorMu(hedefDers, secilenDersler)
+
+                EĞER (kontenjanUygun VE onKosulTamam VE cakismaYok) ISE
+                    secilenDersler.ekle(hedefDers)
+                    toplamKredi = toplamKredi + hedefDers.kredi
+                    kayitOnayDurumu = "Taslak" // Değişiklik yapıldı
+                    YAZ hedefDers.adi + " eklendi."
+                DEĞİLSE
+                    YAZ "HATA: Ders eklenemedi (Kontenjan, ön koşul veya ders çakışması)."
+                SON EĞER
+
+            DURUM "2": // Ders Çıkar
+                SeciliDersleriGoster(secilenDersler)
+                YAZ "Çıkarılacak dersin kodunu girin:"
+                OKU cikarilacakKod
+                EĞER (secilenDersler.iceriyor(cikarilacakKod)) ISE
+                    cikarilanDers = secilenDersler.getir(cikarilacakKod)
+                    secilenDersler.sil(cikarilacakKod)
+                    toplamKredi = toplamKredi - cikarilanDers.kredi
+                    kayitOnayDurumu = "Taslak" // Değişiklik yapıldı
+                    YAZ cikarilanDers.adi + " çıkarıldı."
+                DEĞİLSE
+                    YAZ "HATA: Bu ders zaten seçili değil."
+                SON EĞER
+
+            DURUM "3": // Kayıt Geçmişi
+                YAZ "--- Kayıt Geçmişi ---"
+                HER gecmisKayit İÇİN kayitGecmisi:
+                    YAZ "Dönem: " + gecmisKayit.donem + " | Durum: " + gecmisKayit.durum
+                SON HER
+
+            DURUM "4": // Kaydı Tamamla
+                EĞER (toplamKredi > KREDI_LIMITI) ISE
+                    kayitOnayDurumu = "Danışman Onayı Bekliyor"
+                    YAZ "Kayıt danışman onayına gönderildi."
+                DEĞİLSE
+                    kayitOnayDurumu = "Onaylandı"
+                    YAZ "Kayıt otomatik olarak onaylandı."
+                SON EĞER
+                KayitlariVeritabaninaIsle(ogrenciNo, secilenDersler, kayitOnayDurumu)
+                YAZ "İşlem tamamlandı. Durumunuz: " + kayitOnayDurumu
+
+            DURUM "5": // Çıkış
+                YAZ "Çıkış yapılıyor..."
+
+            VARSAYILAN:
+                YAZ "Geçersiz seçim."
+        SON SEÇİM DURUMU
+    SON DÖNGÜ
+DEĞİLSE
+    YAZ "Giriş hakkınız doldu. Sistem kilitlendi."
+SON EĞER
+
+BİTİR
+```
+
+bu sistemi DOT dilinde yaz
+
+Elbette, ders kayıt sisteminin akışını ve mantığını görselleştirmek için DOT dilinde bir grafik (flowchart/akış şeması) oluşturabiliriz. DOT dili, sistemin adımlarını ve karar noktalarını düğümler (nodes) ve bağlantılar (edges) olarak tanımlar.
+
+Aşağıdaki kodu bir `.dot` uzantılı dosyaya (örneğin, `sistem.dot`) kaydedebilir ve Graphviz gibi bir araç kullanarak görsel bir şemaya dönüştürebilirsiniz.
+
+### 📈 Ders Kayıt Sistemi için DOT Kodu
+
+Bu kod, sistemin başlangıçtan bitişe kadar olan tüm ana yollarını ve karar mekanizmalarını içerir.
+
+```dot
+digraph DersKayitSistemi {
+    // Grafik ayarları
+    rankdir=TB; // Akışı yukarıdan aşağıya ayarla
+    node [shape=box, style=filled, fontname="Helvetica"];
+    edge [fontname="Helvetica"];
+
+    // Düğüm stilleri
+    start_end [shape=ellipse, fillcolor=palegreen];
+    process [shape=box, fillcolor=lightblue];
+    decision [shape=diamond, fillcolor=gold];
+    io [shape=parallelogram, fillcolor=lightgrey];
+    end_state [shape=box, fillcolor=tomato];
+
+    // --- Başlangıç ve Giriş Bloğu ---
+    Basla [label="Başla", node_type=start_end];
+    GirisEkrani [label="Öğrenci Bilgilerini Gir", node_type=io];
+    GirisKontrol [label="Giriş Başarılı?", node_type=decision];
+    DenemeArtir [label="Deneme Sayısını Artır", node_type=process];
+    DenemeHakkiKontrol [label="Deneme Hakkı Var Mı? ( < 3 )", node_type=decision];
+    HesapKilitlendi [label="Hesap Kilitlendi", node_type=end_state];
+    Bitir [label="Bitir", node_type=start_end];
+    
+    // --- Ana Sistem Bloğu ---
+    VeriYukle [label="Öğrenci Verilerini Yükle\n(Dersler, Onay Durumu, Geçmiş)", node_type=process];
+    AnaMenu [label="Ana Menüyü Göster ve Seçim Al", node_type=io];
+    SecimKontrol [label="Kullanıcı Seçimi Ne?", node_type=decision];
+
+    // --- Ders Ekleme Bloğu ---
+    DersEkle_Secim [label="Eklenecek Dersi Seç", node_type=io];
+    DersEkle_Kontrol [label="Kontroller Uygun Mu?\n(Kontenjan, Ön Koşul, Çakışma)", node_type=decision];
+    DersEkle_Islem [label="Dersi Ekle ve Krediyi Güncelle\nDurumu 'Taslak' Yap", node_type=process];
+    DersEkle_Hata [label="Hata: Ders Eklenemedi", node_type=io];
+
+    // --- Ders Çıkarma Bloğu ---
+    DersCikar_Secim [label="Çıkarılacak Dersi Seç", node_type=io];
+    DersCikar_Kontrol [label="Ders Listede Mevcut Mu?", node_type=decision];
+    DersCikar_Islem [label="Dersi Çıkar ve Krediyi Güncelle\nDurumu 'Taslak' Yap", node_type=process];
+    DersCikar_Hata [label="Hata: Ders Bulunamadı", node_type=io];
+
+    // --- Diğer İşlemler ---
+    GecmisiGoster [label="Kayıt Geçmişini Göster", node_type=process];
+    OnayaGonder_Kontrol [label="Kredi Limiti Aşıldı Mı?", node_type=decision];
+    OnayaGonder_Danisman [label="Durumu 'Danışman Onayı Bekliyor' Yap", node_type=process];
+    OnayaGonder_Otomatik [label="Durumu 'Onaylandı' Yap", node_type=process];
+    KaydiTamamla [label="Kaydı Sisteme İşle", node_type=process];
+
+    // --- AKIŞ BAĞLANTILARI ---
+    
+    // Giriş Akışı
+    Basla -> GirisEkrani;
+    GirisEkrani -> GirisKontrol;
+    GirisKontrol -> VeriYukle [label=" Evet"];
+    GirisKontrol -> DenemeArtir [label=" Hayır"];
+    DenemeArtir -> DenemeHakkiKontrol;
+    DenemeHakkiKontrol -> GirisEkrani [label=" Evet"];
+    DenemeHakkiKontrol -> HesapKilitlendi [label=" Hayır"];
+    HesapKilitlendi -> Bitir;
+
+    // Ana Menü Akışı
+    VeriYukle -> AnaMenu;
+    AnaMenu -> SecimKontrol;
+
+    // Seçimlere Göre Yönlendirme
+    SecimKontrol -> DersEkle_Secim [label="1. Ders Ekle"];
+    SecimKontrol -> DersCikar_Secim [label="2. Ders Çıkar"];
+    SecimKontrol -> GecmisiGoster [label="3. Kayıt Geçmişi"];
+    SecimKontrol -> OnayaGonder_Kontrol [label="4. Onaya Gönder"];
+    SecimKontrol -> Bitir [label="5. Çıkış Yap"];
+    
+    // Ders Ekleme Akışı
+    DersEkle_Secim -> DersEkle_Kontrol;
+    DersEkle_Kontrol -> DersEkle_Islem [label=" Evet"];
+    DersEkle_Kontrol -> DersEkle_Hata [label=" Hayır"];
+    DersEkle_Islem -> AnaMenu;
+    DersEkle_Hata -> AnaMenu;
+
+    // Ders Çıkarma Akışı
+    DersCikar_Secim -> DersCikar_Kontrol;
+    DersCikar_Kontrol -> DersCikar_Islem [label=" Evet"];
+    DersCikar_Kontrol -> DersCikar_Hata [label=" Hayır"];
+    DersCikar_Islem -> AnaMenu;
+    DersCikar_Hata -> AnaMenu;
+
+    // Diğer İşlemlerin Akışı
+    GecmisiGoster -> AnaMenu;
+    OnayaGonder_Kontrol -> OnayaGonder_Danisman [label=" Evet"];
+    OnayaGonder_Kontrol -> OnayaGonder_Otomatik [label=" Hayır"];
+    OnayaGonder_Danisman -> KaydiTamamla;
+    OnayaGonder_Otomatik -> KaydiTamamla;
+    KaydiTamamla -> AnaMenu;
+
+}
+```
+
+### Nasıl Kullanılır?
+
+1.  Yukarıdaki metni kopyalayın ve `kayit_sistemi.dot` adıyla bir metin dosyasına kaydedin.
+2.  Bilgisayarınızda Graphviz yüklü ise, komut satırını kullanarak aşağıdaki komutla bir PNG resmi oluşturabilirsiniz:
+    `dot -Tpng kayit_sistemi.dot -o kayit_sistemi.png`
+3.  Alternatif olarak, kodu kopyalayıp çevrimiçi bir Graphviz editörüne (örneğin, `dreampuf.github.io/GraphvizOnline` veya `edotor.net`) yapıştırarak anında görsel çıktıyı alabilirsiniz.
+
+Bu şema, sisteminizin mantıksal akışını ve karar noktalarını net bir şekilde görmenizi sağlayacaktır. Başka bir konuda yardımcı olmamı ister misiniz?
+
+bu sistemi biraz daha basitleştirerek dot dilinde yaz
+
+Elbette, ders kayıt sisteminin daha basitleştirilmiş ve ana akışa odaklanan bir versiyonunu DOT dilinde aşağıda bulabilirsiniz.
+
+Bu versiyonda, ders ekleme/çıkarma gibi işlemlerin iç kontrolleri tek bir işlem kutusunda birleştirilmiş ve sadece ana karar noktaları ve kullanıcı akışı vurgulanmıştır.
+
+### 📈 Basitleştirilmiş Ders Kayıt Sistemi için DOT Kodu
+
+```dot
+digraph BasitDersKayitSistemi {
+    // Grafik ayarları
+    rankdir=TB;
+    node [shape=box, style=filled, fontname="Helvetica", fillcolor=lightblue];
+    edge [fontname="Helvetica"];
+
+    // Ana Düğümler
+    Basla [shape=ellipse, fillcolor=palegreen];
+    KullaniciGirisi [label="Kullanıcı Girişi Yapılır"];
+    GirisKontrol [shape=diamond, fillcolor=gold, label="Giriş Başarılı?"];
+    AnaMenu [shape=box, fillcolor=lightgrey, label="Ana Menü"];
+    Bitir [shape=ellipse, fillcolor=tomato, label="Sistemden Çıkış"];
+
+    // İşlem Düğümleri
+    DersIslemleri [label="Ders Ekleme / Çıkarma\n(Kontroller yapılır, liste güncellenir)"];
+    GecmisiGoruntule [label="Kayıt Geçmişini Görüntüle"];
+    KaydiOnayaGonder [label="Kaydı Onaya Gönder"];
+    OnayKontrol [shape=diamond, fillcolor=gold, label="Kredi Limiti Aşıldı Mı?"];
+    KayitSonucu [label="Onay Durumu Sisteme Kaydedilir"];
+
+
+    // --- AKIŞ BAĞLANTILARI ---
+
+    // 1. Giriş Akışı
+    Basla -> KullaniciGirisi;
+    KullaniciGirisi -> GirisKontrol;
+    GirisKontrol -> AnaMenu [label=" Evet"];
+    GirisKontrol -> Bitir [label=" Hayır\n(3 deneme sonrası)"];
+
+    // 2. Ana Menüden Yönlendirme
+    AnaMenu -> DersIslemleri [label="Ders İşlemleri Seçildi"];
+    AnaMenu -> GecmisiGoruntule [label="Geçmişi Görüntüle Seçildi"];
+    AnaMenu -> KaydiOnayaGonder [label="Kaydı Tamamla Seçildi"];
+    AnaMenu -> Bitir [label="Çıkış Seçildi"];
+
+    // 3. İşlemlerden Geri Dönüş
+    DersIslemleri -> AnaMenu;
+    GecmisiGoruntule -> AnaMenu;
+
+    // 4. Kayıt Onay Akışı
+    KaydiOnayaGonder -> OnayKontrol;
+    OnayKontrol -> KayitSonucu [label=" Evet (Danışman Onayı Gerekli)"];
+    OnayKontrol -> KayitSonucu [label=" Hayır (Otomatik Onay)"];
+    KayitSonucu -> AnaMenu;
+}
+
+```
+
+### Bu Versiyon Neden Daha Basit?
+
+  * **Gruplanmış İşlemler:** Ders ekleme, çıkarma, kontroller ve hatalar gibi birden çok adım, tek bir "Ders İşlemleri" kutusunda özetlenmiştir.
+  * **Net Akış:** Grafiğin odağı, kullanıcının `Giriş -> Ana Menü -> İşlem Yap -> Ana Menü` şeklindeki temel döngüsüdür.
+  * **Azaltılmış Düğüm Sayısı:** Sadece en kritik adımlar ve kararlar gösterildiği için akışı takip etmek daha kolaydır.
+
+Bu basitleştirilmiş şemayı da daha önceki gibi bir `.dot` dosyasına kaydedip görselleştirebilirsiniz.
