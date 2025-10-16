@@ -1,0 +1,45 @@
+digraph BasitDersKayitSistemi {
+    // Grafik ayarları
+    rankdir=TB;
+    node [shape=box, style=filled, fontname="Helvetica", fillcolor=lightblue];
+    edge [fontname="Helvetica"];
+
+    // Ana Düğümler
+    Basla [shape=ellipse, fillcolor=palegreen];
+    KullaniciGirisi [label="Kullanıcı Girişi Yapılır"];
+    GirisKontrol [shape=diamond, fillcolor=gold, label="Giriş Başarılı?"];
+    AnaMenu [shape=box, fillcolor=lightgrey, label="Ana Menü"];
+    Bitir [shape=ellipse, fillcolor=tomato, label="Sistemden Çıkış"];
+
+    // İşlem Düğümleri
+    DersIslemleri [label="Ders Ekleme / Çıkarma\n(Kontroller yapılır, liste güncellenir)"];
+    GecmisiGoruntule [label="Kayıt Geçmişini Görüntüle"];
+    KaydiOnayaGonder [label="Kaydı Onaya Gönder"];
+    OnayKontrol [shape=diamond, fillcolor=gold, label="Kredi Limiti Aşıldı Mı?"];
+    KayitSonucu [label="Onay Durumu Sisteme Kaydedilir"];
+
+
+    // --- AKIŞ BAĞLANTILARI ---
+
+    // 1. Giriş Akışı
+    Basla -> KullaniciGirisi;
+    KullaniciGirisi -> GirisKontrol;
+    GirisKontrol -> AnaMenu [label=" Evet"];
+    GirisKontrol -> Bitir [label=" Hayır\n(3 deneme sonrası)"];
+
+    // 2. Ana Menüden Yönlendirme
+    AnaMenu -> DersIslemleri [label="Ders İşlemleri Seçildi"];
+    AnaMenu -> GecmisiGoruntule [label="Geçmişi Görüntüle Seçildi"];
+    AnaMenu -> KaydiOnayaGonder [label="Kaydı Tamamla Seçildi"];
+    AnaMenu -> Bitir [label="Çıkış Seçildi"];
+
+    // 3. İşlemlerden Geri Dönüş
+    DersIslemleri -> AnaMenu;
+    GecmisiGoruntule -> AnaMenu;
+
+    // 4. Kayıt Onay Akışı
+    KaydiOnayaGonder -> OnayKontrol;
+    OnayKontrol -> KayitSonucu [label=" Evet (Danışman Onayı Gerekli)"];
+    OnayKontrol -> KayitSonucu [label=" Hayır (Otomatik Onay)"];
+    KayitSonucu -> AnaMenu;
+}
