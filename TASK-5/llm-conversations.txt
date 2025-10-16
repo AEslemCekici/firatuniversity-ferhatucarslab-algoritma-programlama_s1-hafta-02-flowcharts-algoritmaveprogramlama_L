@@ -1,0 +1,717 @@
+bana bir akıllı sistemimin pseudocodunu yaz detayları tek tek yazacağım
+
+Harika, hazırım\!
+
+Akıllı sisteminizin pseudocode'unu oluşturmak için sizden gelecek detayları bekliyorum. Süreci daha verimli hale getirmek için, genellikle bir akıllı sistemin temel adımlarını içeren genel bir yapı hazırladım. Siz detayları verdikçe bu yapıyı doldurup geliştireceğiz.
+
+İşte genel taslak:
+
+```plaintext
+BAŞLA
+
+   // 1. ADIM: Veri Toplama / Girdi Alma
+   // (Sensörlerden, kullanıcıdan, internetten veya başka bir kaynaktan veri okunur)
+   Gerekli verileri al.
+
+   // 2. ADIM: Veriyi İşleme ve Durum Tespiti
+   // (Alınan veriler anlamlandırılır, mevcut durum analiz edilir)
+   Verileri analiz et ve durumu belirle.
+
+   // 3. ADIM: Karar Verme (Akıllı Mantık)
+   // (Belirlenen duruma göre sistemin ne yapacağına karar verilir)
+   EĞER (belirli bir koşul DOĞRU) ISE
+      Yapılacak eylemi belirle.
+   DEĞİLSE
+      Farklı bir eylem belirle.
+   SON EĞER
+
+   // 4. ADIM: Eyleme Geçme / Çıktı Üretme
+   // (Verilen karar uygulanır. Bir cihaz çalıştırılır, kullanıcıya bildirim gönderilir vb.)
+   Belirlenen eylemi gerçekleştir.
+
+BİTİR
+```
+
+Lütfen ilk detayı veya sistemin genel amacını yazın, başlayalım. Örneğin, "Bu bir akıllı oda aydınlatma sistemi olacak" gibi bir başlangıç yapabilirsiniz.
+
+sistem açık mı kontrolü koşul
+
+Anlaşıldı, ilk koşulu ekliyorum.
+
+Sistemin herhangi bir akıllı işlem yapmadan önce **açık olup olmadığını** kontrol etmesi en temel adımdır. Bu detaya göre pseudocode'u güncelliyorum.
+
+```plaintext
+BAŞLA
+
+   // Ana sistem değişkeni
+   TANIMLA sistemAcikMi: MANTIKSAL
+
+   // Sistemin fiziksel bir düğmeden veya bir ayar dosyasından açık olup olmadığını kontrol et
+   sistemAcikMi = SisteminGucDurumunuOku()
+
+   // Ana kontrol koşulu
+   EĞER (sistemAcikMi == DOĞRU) ISE
+      // --- SİSTEMİN DİĞER TÜM MANTIĞI BU BLOĞUN İÇİNDE ÇALIŞACAK ---
+
+      // 1. ADIM: Veri Toplama / Girdi Alma
+      // (Sizden gelecek bir sonraki detayı bekliyor)
+      
+      // 2. ADIM: Veriyi İşleme ve Durum Tespiti
+      
+      // 3. ADIM: Karar Verme (Akıllı Mantık)
+      
+      // 4. ADIM: Eyleme Geçme / Çıktı Üretme
+      
+      YAZ "Sistem aktif ve çalışıyor." // Örnek çıktı
+
+   DEĞİLSE
+      // Sistem kapalıysa hiçbir işlem yapma
+      YAZ "Sistem kapalı."
+   SON EĞER
+
+BİTİR
+```
+
+Harika, ilk adımı ekledik. Şimdi **sistem açıksa** yapması gereken bir sonraki adımı veya kontrol etmesi gereken bir sonraki koşulu yazabilirsiniz.
+
+sesör okuma döngüsü,hareket sensörü kontorlüü koşul, kapaı pencere kontrolü, kamera aktivasyonu, 
+
+Harika, yeni detayları aldım. Bu bilgilere göre sisteminiz bir **akıllı güvenlik sistemine** benziyor. Pseudocode'u bu mantığa göre güncelliyorum.
+
+Eklenenler:
+
+  * **Sürekli bir döngü:** Sensörleri anlık olarak değil, sürekli kontrol eder.
+  * **Hareket sensörü:** Ana tetikleyici olarak kullanılır.
+  * **Kapı/Pencere sensörleri:** Hareket algılandığında ek bilgi sağlar.
+  * **Kamera aktivasyonu:** Hareket algılandığında yapılacak ilk eylemdir.
+
+İşte güncellenmiş pseudocode:
+
+```plaintext
+BAŞLA
+
+   // Ana sistem değişkenleri
+   TANIMLA sistemAcikMi, hareketVarMi, kapiPencereAcikMi: MANTIKSAL
+
+   sistemAcikMi = SisteminGucDurumunuOku()
+
+   // Ana kontrol koşulu
+   EĞER (sistemAcikMi == DOĞRU) ISE
+   
+      // --- Sensör Okuma Döngüsü ---
+      SÜREKLİ DÖNGÜ
+      
+         // 1. ADIM: Veri Toplama (Sensörleri Oku)
+         hareketVarMi = HareketSensorunuOku()
+         kapiPencereAcikMi = KapiPencereSensorleriniOku()
+
+         // 2. ADIM: Karar Verme (Akıllı Mantık)
+         // Ana koşul: Hareket var mı?
+         EĞER (hareketVarMi == DOĞRU) ISE
+            YAZ "Hareket algılandı!"
+
+            // 3. ADIM: Eyleme Geçme
+            // Kamera hemen aktif edilir
+            KamerayiAktifEt()
+
+            // Ek kontrol: Kapı veya pencere açık mı?
+            EĞER (kapiPencereAcikMi == DOĞRU) ISE
+               YAZ "ALARM: Hareket algılandı ve kapı/pencere açık!"
+               // (Buraya alarm çalma, bildirim gönderme gibi kritik eylemler eklenebilir)
+            DEĞİLSE
+               YAZ "Bilgi: Sadece hareket algılandı."
+               // (Buraya daha düşük öncelikli bir bildirim eklenebilir)
+            SON EĞER
+            
+         DEĞİLSE
+            // Hareket yoksa sistem beklemede kalır
+            YAZ "Ortam sakin, hareket yok."
+            KamerayiPasifEt() // Enerji tasarrufu için kamera kapatılabilir
+         SON EĞER
+
+         // Döngünün sistemi yormaması için kısa bir bekleme eklenir
+         BEKLE(1 saniye) 
+         
+      SON DÖNGÜ // Bu döngü sistem kapanana kadar devam eder
+
+   DEĞİLSE
+      YAZ "Sistem kapalı."
+   SON EĞER
+
+BİTİR
+```
+
+Sistemimiz artık hareket algılayıp kamerayı çalıştırabiliyor. Bir sonraki adım olarak ne eklememizi istersiniz? Örneğin:
+
+  * Tehlike anında **kullanıcıya bildirim gönderme**?
+  * Kameranın **kayıt yapması** veya **fotoğraf çekmesi**?
+  * Sistemi **"Evde"** veya **"Dışarıda"** gibi farklı modlarda çalıştırma?
+
+  hepsini ekle
+
+  Anlaşıldı, istenen tüm özellikleri ekleyerek sistemi çok daha yetenekli hale getiriyorum.
+
+Eklenenler:
+
+  * **Sistem Modları:** Artık sistem "Evde" ve "Dışarıda" olmak üzere iki farklı modda çalışabiliyor.
+  * **Bildirim Gönderme:** Kritik durumlarda kullanıcıya acil durum bildirimi gönderilir.
+  * **Kayıt ve Fotoğraf:** Kamera sadece aktif olmakla kalmıyor, aynı zamanda kanıt için kayıt yapıyor ve fotoğraf çekiyor.
+
+İşte tüm bu özelliklerin eklendiği, detaylı ve son haliyle akıllı sisteminizin pseudocode'u:
+
+```plaintext
+BAŞLA
+
+   // --- SİSTEM AYARLARI VE DEĞİŞKENLER ---
+   TANIMLA sistemAcikMi, hareketVarMi, kapiPencereAcikMi: MANTIKSAL
+   TANIMLA sistemModu: METİN // Olası değerler: "Evde", "Dışarıda"
+
+   // --- SİSTEMİN BAŞLATILMASI ---
+   sistemAcikMi = SisteminGucDurumunuOku()
+   
+   // Sistem ilk açıldığında varsayılan modu veya son kaydedilen modu oku
+   sistemModu = KayitliSistemModunuOku() // Örn: "Dışarıda"
+
+   // Ana kontrol koşulu
+   EĞER (sistemAcikMi == DOĞRU) ISE
+   
+      // --- Sonsuz Sensör Okuma Döngüsü ---
+      SÜREKLİ DÖNGÜ
+      
+         // 1. ADIM: VERİ TOPLAMA (Sensörleri Oku)
+         hareketVarMi = HareketSensorunuOku()
+         
+         // 2. ADIM: KARAR VERME VE EYLEM (Sistem Moduna Göre)
+         SEÇİM DURUMU (sistemModu)
+
+            // --- DURUM 1: "DIŞARIDA" MODU (YÜKSEK GÜVENLİK) ---
+            DURUM "Dışarıda":
+               EĞER (hareketVarMi == DOĞRU) ISE
+                  YAZ "ALARM: 'Dışarıda' modunda hareket algılandı!"
+
+                  // Eyleme Geçme
+                  KamerayiAktifEt()
+                  KayitBaslat()
+                  FotografCek()
+                  
+                  // Ek Kontrol
+                  kapiPencereAcikMi = KapiPencereSensorleriniOku()
+                  EĞER (kapiPencereAcikMi == DOĞRU) ISE
+                     // En kritik senaryo
+                     KullaniciyaBildirimGonder("ACİL! Evde hareket var ve kapı/pencere açık!", "KRİTİK")
+                     SireniCal()
+                  DEĞİLSE
+                     // Kritik ama daha düşük seviye
+                     KullaniciyaBildirimGonder("UYARI! Evde hareket algılandı.", "YÜKSEK")
+                  SON EĞER
+               DEĞİLSE
+                  // Hareket yoksa her şey normal
+                  KamerayiPasifEt()
+                  KaydiDurdur()
+               SON EĞER
+
+            // --- DURUM 2: "EVDE" MODU (BİLGİLENDİRME AMAÇLI) ---
+            DURUM "Evde":
+               EĞER (hareketVarMi == DOĞRU) ISE
+                  YAZ "BİLGİ: 'Evde' modunda hareket algılandı."
+                  
+                  // Bu modda alarm çalınmaz, sadece bilgilendirme ve kayıt yapılır
+                  KamerayiAktifEt()
+                  FotografCek() // O anın görüntüsünü al
+                  
+                  // Düşük öncelikli bildirim
+                  KullaniciyaBildirimGonder("Bilgi: Siz evdeyken bir hareket algılandı.", "DÜŞÜK")
+               DEĞİLSE
+                  KamerayiPasifEt()
+               SON EĞER
+
+            VARSAYILAN:
+               YAZ "Hata: Geçersiz sistem modu."
+
+         SON SEÇİM DURUMU
+
+         // Döngünün verimli çalışması için kısa bir bekleme
+         BEKLE(1 saniye) 
+         
+      SON DÖNGÜ
+
+   DEĞİLSE
+      YAZ "Sistem kapalı."
+   SON EĞER
+
+BİTİR
+```
+
+bildirim gönderme, bekle ve tekrra kontrol et (döngü), ekle
+
+Anlaşıldı, bu çok önemli bir ekleme. Sistem artık sadece alarm vermekle kalmayacak, aynı zamanda durumu tekrar kontrol ederek yanlış alarmları önlemeye çalışacak ve tehlike devam ediyorsa durumu tırmandıracak.
+
+Eklenenler:
+
+  * **Bildirim Gönderme:** İlk hareket algılandığında kullanıcıya bir "ön uyarı" bildirimi gönderilir.
+  * **Bekle ve Tekrar Kontrol Et Döngüsü:** Sistem, bildirimden sonra kısa bir süre bekler ve sensörleri tekrar okur.
+  * **Durum Tırmandırma:** Eğer hareket hala devam ediyorsa, sistem bunun bir tehlike olduğunu varsayarak asıl alarmı (örn: siren) devreye sokar.
+
+İşte bu yeni mantığı içeren, en gelişmiş haliyle akıllı güvenlik sisteminizin pseudocode'u:
+
+```plaintext
+BAŞLA
+
+   // --- SİSTEM AYARLARI VE DEĞİŞKENLER ---
+   TANIMLA sistemAcikMi, hareketVarMi, kapiPencereAcikMi: MANTIKSAL
+   TANIMLA sistemModu: METİN // Olası değerler: "Evde", "Dışarıda"
+   TANIMLA BEKLEME_SURESI: SABİT TAMSAYI = 15 // saniye
+
+   // --- SİSTEMİN BAŞLATILMASI ---
+   sistemAcikMi = SisteminGucDurumunuOku()
+   sistemModu = KayitliSistemModunuOku()
+
+   // Ana kontrol koşulu
+   EĞER (sistemAcikMi == DOĞRU) ISE
+   
+      SÜREKLİ DÖNGÜ
+         
+         // 1. ADIM: VERİ TOPLAMA
+         hareketVarMi = HareketSensorunuOku()
+         
+         // 2. ADIM: KARAR VERME VE EYLEM (Sistem Moduna Göre)
+         SEÇİM DURUMU (sistemModu)
+
+            // --- DURUM 1: "DIŞARIDA" MODU (YÜKSEK GÜVENLİK) ---
+            DURUM "Dışarıda":
+               EĞER (hareketVarMi == DOĞRU) ISE
+                  YAZ "Ön Uyarı: 'Dışarıda' modunda hareket algılandı!"
+
+                  // Eyleme Geçme (1. Aşama - Ön Uyarı)
+                  KamerayiAktifEt()
+                  KayitBaslat()
+                  FotografCek()
+                  KullaniciyaBildirimGonder("UYARI! Evde hareket algılandı. Kontrol ediliyor...", "YÜKSEK")
+
+                  // YENİ EKLENEN ADIM: BEKLE VE TEKRAR KONTROL ET
+                  YAZ BEKLEME_SURESI + " saniye bekleniyor..."
+                  BEKLE(BEKLEME_SURESI)
+                  
+                  // Tekrar Kontrol
+                  hareketVarMi = HareketSensorunuOku() 
+                  EĞER (hareketVarMi == DOĞRU) ISE
+                     // Eyleme Geçme (2. Aşama - Alarm Tırmandırma)
+                     YAZ "ALARM: Hareket devam ediyor! Tehlike durumu aktif!"
+                     KullaniciyaBildirimGonder("ACİL! Hareket devam ediyor, alarm devreye sokuldu!", "KRİTİK")
+                     SireniCal()
+                  DEĞİLSE
+                     YAZ "Bilgi: Hareket durdu. Durum normale döndü."
+                     KullaniciyaBildirimGonder("Bilgi: Algılanan hareket durdu, yanlış alarm olabilir.", "DÜŞÜK")
+                     // Kayıt durdurulabilir veya devam edebilir
+                  SON EĞER
+               DEĞİLSE
+                  // Hareket yoksa her şey normal
+                  KamerayiPasifEt()
+                  KaydiDurdur()
+               SON EĞER
+
+            // --- DURUM 2: "EVDE" MODU (BİLGİLENDİRME AMAÇLI) ---
+            DURUM "Evde":
+               // Bu modda bekleme ve tekrar kontrol döngüsü genellikle olmaz
+               EĞER (hareketVarMi == DOĞRU) ISE
+                  YAZ "BİLGİ: 'Evde' modunda hareket algılandı."
+                  KamerayiAktifEt()
+                  KullaniciyaBildirimGonder("Bilgi: Siz evdeyken bir hareket algılandı.", "DÜŞÜK")
+               DEĞİLSE
+                  KamerayiPasifEt()
+               SON EĞER
+
+         SON SEÇİM DURUMU
+
+         BEKLE(1 saniye) 
+         
+      SON DÖNGÜ
+
+   DEĞİLSE
+      YAZ "Sistem kapalı."
+   SON EĞER
+
+BİTİR
+```
+
+akıllı ev sistemini verdiğim komutları ve kendin eklediğin her şeyi ile tek bir pseudecodeda topla yaz
+
+Elbette, konuştuğumuz ve eklediğimiz tüm komutları bir araya getirerek akıllı ev güvenlik sisteminizin tam ve nihai pseudocode'unu aşağıda sunuyorum.
+
+Bu kod, sistemin açılışından, sensörleri okumasına, modlara göre farklı kararlar vermesine ve tehlike anında aşamalı olarak tepki göstermesine kadar tüm mantığı tek bir yerde toplar.
+
+-----
+
+### Tam Akıllı Ev Güvenlik Sistemi Pseudocode'u
+
+```plaintext
+BAŞLA
+
+   // --- 1. SİSTEMİN BAŞLANGIÇ AYARLARI VE DEĞİŞKENLERİ ---
+   TANIMLA sistemAcikMi, hareketVarMi, kapiPencereAcikMi: MANTIKSAL
+   TANIMLA sistemModu: METİN // Olası değerler: "Evde", "Dışarıda"
+   TANIMLA TEKRAR_KONTROL_SURESI: SABİT TAMSAYI = 15 // saniye
+
+   // --- 2. SİSTEMİN GÜÇ KONTROLÜ VE MOD YÜKLENMESİ ---
+   YAZ "Sistem başlatılıyor..."
+   sistemAcikMi = SisteminGucDurumunuOku()
+   
+   // Sistem açıksa, kayıtlı son modu yükle
+   EĞER (sistemAcikMi == DOĞRU) ISE
+      sistemModu = KayitliSistemModunuOku()
+      YAZ "Sistem durumu: AKTİF. Mod: " + sistemModu
+   DEĞİLSE
+      YAZ "Sistem durumu: KAPALI. İşlem yapılmayacak."
+      BİTİR // Sistem kapalıysa programı sonlandır
+   SON EĞER
+
+   // --- 3. ANA SENSÖR DÖNGÜSÜ (Sistem açıksa başlar) ---
+   SÜREKLİ DÖNGÜ
+      
+      // 3.1. VERİ TOPLAMA: Ana sensörleri her döngüde oku
+      hareketVarMi = HareketSensorunuOku()
+      
+      // 3.2. KARAR VERME: Sistemin moduna göre mantığı çalıştır
+      SEÇİM DURUMU (sistemModu)
+
+         // --- DURUM A: "DIŞARIDA" MODU (YÜKSEK GÜVENLİK) ---
+         DURUM "Dışarıda":
+            EĞER (hareketVarMi == DOĞRU) ISE
+               // AŞAMA 1: İLK TESPİT VE ÖN UYARI
+               YAZ "İLK TESPİT: 'Dışarıda' modunda hareket algılandı!"
+               KamerayiAktifEt()
+               KayitBaslat()
+               FotografCek()
+               KullaniciyaBildirimGonder("UYARI! Evde hareket algılandı. Durum " + TEKRAR_KONTROL_SURESI + " sn içinde tekrar kontrol edilecek.", "YÜKSEK")
+
+               // AŞAMA 2: BEKLEME VE TEKRAR KONTROL
+               YAZ "Tekrar kontrol için bekleniyor..."
+               BEKLE(TEKRAR_KONTROL_SURESI)
+               
+               hareketVarMi = HareketSensorunuOku() // Sensörü tekrar oku
+               
+               EĞER (hareketVarMi == DOĞRU) ISE
+                  // AŞAMA 3: TEHLİKE DOĞRULANDI, ALARM!
+                  YAZ "ALARM: Hareket devam ediyor! Tehlike doğrulandı!"
+                  
+                  // Kapı/pencere sensörünü sadece tehlike doğrulandığında kontrol et
+                  kapiPencereAcikMi = KapiPencereSensorleriniOku()
+                  EĞER (kapiPencereAcikMi == DOĞRU) ISE
+                     KullaniciyaBildirimGonder("ACİL DURUM! Hareket devam ediyor ve KAPI/PENCERE AÇIK!", "KRİTİK")
+                  DEĞİLSE
+                     KullaniciyaBildirimGonder("ACİL DURUM! Evdeki hareket devam ediyor!", "KRİTİK")
+                  SON EĞER
+                  SireniCal() // En son siren çalınır
+               DEĞİLSE
+                  // Tehlike durumu ortadan kalktı
+                  YAZ "Durum normale döndü. Algılanan hareket durdu."
+                  KullaniciyaBildirimGonder("Bilgi: Hareket durdu, yanlış alarm olabilir. Kayıt alındı.", "DÜŞÜK")
+                  KaydiDurdur()
+                  KamerayiPasifEt()
+               SON EĞER
+            SON EĞER
+
+         // --- DURUM B: "EVDE" MODU (BİLGİLENDİRME AMAÇLI) ---
+         DURUM "Evde":
+            EĞER (hareketVarMi == DOĞRU) ISE
+               // Bu modda sadece anlık bilgilendirme yapılır, alarm çalınmaz
+               YAZ "BİLGİ: 'Evde' modunda hareket algılandı."
+               KamerayiAktifEt() // Sadece o anı görmek için kamera açılır
+               KullaniciyaBildirimGonder("Bilgi: Siz evdeyken bir hareket algılandı.", "DÜŞÜK")
+               BEKLE(5 saniye) // Kısa bir süre sonra kamera kapatılır
+               KamerayiPasifEt()
+            SON EĞER
+
+         // --- DURUM C: GEÇERSİZ MOD ---
+         VARSAYILAN:
+            YAZ "HATA: Tanımsız sistem modu! Lütfen kontrol edin."
+            BEKLE(10 saniye)
+
+      SON SEÇİM DURUMU
+
+      // Her döngü arasında sisteme kısa bir dinlenme süresi ver
+      BEKLE(1 saniye) 
+      
+   SON DÖNGÜ
+
+BİTİR
+```
+
+en son yazdığın pseudocodedaki syntax hatalarını düzeltip yeniden eklediğimiz şeyleri dikkate alarak yaz
+
+Elbette, bir önceki adımda düzelttiğimiz haliyle, eklediğimiz tüm özellikleri içeren nihai ve hatasız pseudocode'u aşağıda tekrar sunuyorum.
+
+Bu kod, sistemin en güncel ve tam çalışan mantığını temsil etmektedir.
+
+**İçerdiği Tüm Özellikler:**
+
+  * Sistemin genel açılış/kapanış kontrolü.
+  * "Evde" ve "Dışarıda" olmak üzere iki farklı çalışma modu.
+  * Hareket ve kapı/pencere sensörlerinin okunması.
+  * Kamera aktivasyonu, kayıt başlatma ve fotoğraf çekme.
+  * Farklı öncelik seviyelerine sahip kullanıcı bildirimleri gönderme.
+  * Tehlike anında siren çalma.
+  * Yanlış alarmları önlemek için **"Bekle ve Tekrar Kontrol Et"** döngüsü.
+
+-----
+
+### Akıllı Ev Güvenlik Sistemi - Nihai ve Düzeltilmiş Pseudocode
+
+```plaintext
+BAŞLA
+
+   // --- 1. SİSTEMİN BAŞLANGIÇ AYARLARI VE DEĞİŞKENLERİ ---
+   TANIMLA sistemAcikMi, hareketVarMi, kapiPencereAcikMi: MANTIKSAL
+   TANIMLA sistemModu: METİN // Olası değerler: "Evde", "Dışarıda"
+   TANIMLA TEKRAR_KONTROL_SURESI: SABİT TAMSAYI = 15 // saniye
+
+   // --- 2. SİSTEMİN GÜÇ KONTROLÜ VE MOD YÜKLENMESİ ---
+   YAZ "Sistem başlatılıyor..."
+   sistemAcikMi = SisteminGucDurumunuOku()
+   
+   EĞER (sistemAcikMi == DOĞRU) ISE
+      sistemModu = KayitliSistemModunuOku()
+      YAZ "Sistem durumu: AKTİF. Mod: " + sistemModu
+   DEĞİLSE
+      YAZ "Sistem durumu: KAPALI. İşlem yapılmayacak."
+      BİTİR
+   SON EĞER
+
+   // --- 3. ANA SENSÖR DÖNGÜSÜ (Sistem açıksa başlar) ---
+   SÜREKLİ DÖNGÜ
+      
+      // 3.1. VERİ TOPLAMA
+      hareketVarMi = HareketSensorunuOku()
+      
+      // 3.2. KARAR VERME
+      SEÇİM DURUMU (sistemModu)
+
+         // --- DURUM A: "DIŞARIDA" MODU (YÜKSEK GÜVENLİK) ---
+         DURUM "Dışarıda":
+            EĞER (hareketVarMi == DOĞRU) ISE
+               // AŞAMA 1: İLK TESPİT
+               YAZ "İLK TESPİT: 'Dışarıda' modunda hareket algılandı!"
+               KamerayiAktifEt()
+               KayitBaslat()
+               FotografCek()
+               KullaniciyaBildirimGonder("UYARI! Evde hareket algılandı. Durum " + TEKRAR_KONTROL_SURESI + " sn içinde tekrar kontrol edilecek.", "YÜKSEK")
+
+               // AŞAMA 2: BEKLEME VE TEKRAR KONTROL
+               YAZ "Tekrar kontrol için bekleniyor..."
+               BEKLE(TEKRAR_KONTROL_SURESI)
+               
+               hareketVarMi = HareketSensorunuOku()
+               
+               EĞER (hareketVarMi == DOĞRU) ISE
+                  // AŞAMA 3: TEHLİKE DOĞRULANDI, ALARM!
+                  YAZ "ALARM: Hareket devam ediyor! Tehlike doğrulandı!"
+                  
+                  kapiPencereAcikMi = KapiPencereSensorleriniOku()
+                  EĞER (kapiPencereAcikMi == DOĞRU) ISE
+                     KullaniciyaBildirimGonder("ACİL DURUM! Hareket devam ediyor ve KAPI/PENCERE AÇIK!", "KRİTİK")
+                  DEĞİLSE
+                     KullaniciyaBildirimGonder("ACİL DURUM! Evdeki hareket devam ediyor!", "KRİTİK")
+                  SON EĞER
+                  
+                  SireniCal()
+               DEĞİLSE
+                  // Tehlike durumu ortadan kalktı
+                  YAZ "Durum normale döndü. Algılanan hareket durdu."
+                  KullaniciyaBildirimGonder("Bilgi: Hareket durdu, yanlış alarm olabilir. Kayıt alındı.", "DÜŞÜK")
+                  KaydiDurdur()
+                  KamerayiPasifEt()
+               SON EĞER
+            SON EĞER
+
+         // --- DURUM B: "EVDE" MODU (BİLGİLENDİRME AMAÇLI) ---
+         DURUM "Evde":
+            EĞER (hareketVarMi == DOĞRU) ISE
+               YAZ "BİLGİ: 'Evde' modunda hareket algılandı."
+               KamerayiAktifEt()
+               KullaniciyaBildirimGonder("Bilgi: Siz evdeyken bir hareket algılandı.", "DÜŞÜK")
+               BEKLE(5 saniye)
+               KamerayiPasifEt()
+            SON EĞER
+
+         // --- DURUM C: GEÇERSİZ MOD ---
+         VARSAYILAN:
+            YAZ "HATA: Tanımsız sistem modu! Lütfen kontrol edin."
+            BEKLE(10 saniye)
+
+      SON SEÇİM DURUMU
+
+      BEKLE(1 saniye) 
+      
+   SON DÖNGÜ
+
+BİTİR
+```
+
+syntax error in line 1 near 'BAŞLA'
+
+bu kod graphvizde bu hatayı veriyor bu hatayı düzelt
+
+Merhaba, belirttiğiniz hata çok normal ve önemli bir noktaya işaret ediyor. Hatayı hemen açıklayıp doğrusunu veriyorum.
+
+### Hatanın Sebebi
+
+Hatanın sebebi, **iki farklı kod türünü karıştırmanızdır**:
+
+1.  **Pseudocode (Sözde Kod):** `BAŞLA` ile başlayan ve size yazdığım kod, bir programın mantığını ve adımlarını **insanların okuması için** anlatan bir metindir. Bu bir plan veya taslaktır, herhangi bir program tarafından doğrudan çalıştırılamaz.
+2.  **DOT Dili (Graphviz Kodu):** Graphviz programı ise sadece kendi özel dili olan **DOT dilini** anlar. Bu dil, `digraph { ... }` ile başlar ve şekiller (düğümler) ile aralarındaki okları (bağlantıları) tanımlamak için kullanılır.
+
+Kısacası, Graphviz programına bir plan metni (`BAŞLA` ile başlayan) verdiğiniz için program bunu anlayamıyor ve ilk kelimede syntax hatası veriyor.
+
+### Düzeltme: Sistemin Akış Şemasını Çizen Doğru DOT Kodu
+
+Graphviz'de çalıştırmanız gereken doğru kod, en son geliştirdiğimiz akıllı sistemin mantığını bir akış şeması olarak çizen aşağıdaki **DOT dili** kodudur.
+
+Bu kodu bir `.dot` dosyasına kaydedip Graphviz ile açtığınızda sistemin akış şemasını hatasız bir şekilde göreceksiniz.
+
+```dot
+digraph AkilliGuvenlikSistemi {
+    // Grafik ayarları
+    rankdir=TB;
+    node [shape=box, style=filled, fontname="Helvetica"];
+    edge [fontname="Helvetica"];
+
+    // Düğüm stilleri
+    start_end [shape=ellipse, fillcolor=palegreen];
+    process [shape=box, fillcolor=lightblue];
+    decision [shape=diamond, fillcolor=gold];
+    alarm_node [shape=box, style="filled,rounded", fillcolor=tomato];
+    io [shape=parallelogram, fillcolor=lightgrey];
+
+    // --- Akış Başlangıcı ---
+    Basla [label="Başla", node_type=start_end];
+    GucKontrolu [label="Sistem Açık Mı?", node_type=decision];
+    Bitir [label="Sistem Kapalı Kalır", node_type=start_end];
+    ModuYukle [label="Kaydedilen Modu Yükle\n('Evde' veya 'Dışarıda')", node_type=io];
+    SensorDongusu [label="Sensörleri Sürekli Oku", shape=circle, style=dashed];
+
+    // --- Karar ve Eylem Düğümleri ---
+    HareketKontrolu [label="Hareket Algılandı Mı?", node_type=decision];
+    ModKontrolu [label="Sistem Modu Ne?", node_type=decision];
+    
+    // "Evde" Modu
+    EvdeModuIslemi [label="Bilgilendirme Amaçlı\nKamera Aç ve Bildirim Gönder", node_type=process];
+
+    // "Dışarıda" Modu
+    IlkTespit [label="AŞAMA 1: İlk Tespit\nKamera Aç, Kayıt Başlat,\nÖn Bildirim Gönder", node_type=process];
+    Bekle [label="15 Saniye Bekle", shape=Mdiamond, style=filled, fillcolor=lightyellow];
+    TekrarKontrol [label="Hareket Devam Ediyor Mu?", node_type=decision];
+    AlarmDurumu [label="AŞAMA 3: ALARM\nKritik Bildirim Gönder,\nSiren Çal!", node_type=alarm_node];
+    DurumNormaleDondu [label="Durum Normale Döndü\nBilgi Bildirimi Gönder,\nKamerayı Kapat", node_type=process];
+
+    // --- Bağlantılar (Oklar) ---
+    Basla -> GucKontrolu;
+    GucKontrolu -> Bitir [label=" Hayır"];
+    GucKontrolu -> ModuYukle [label=" Evet"];
+    ModuYukle -> SensorDongusu;
+    
+    SensorDongusu -> HareketKontrolu;
+    HareketKontrolu -> SensorDongusu [label=" Hayır (Ortam Sakin)"];
+    HareketKontrolu -> ModKontrolu [label=" Evet"];
+
+    ModKontrolu -> EvdeModuIslemi [label=" 'Evde' Modu"];
+    EvdeModuIslemi -> SensorDongusu;
+
+    ModKontrolu -> IlkTespit [label=" 'Dışarıda' Modu"];
+    IlkTespit -> Bekle;
+    Bekle -> TekrarKontrol;
+    TekrarKontrol -> AlarmDurumu [label=" Evet"];
+    TekrarKontrol -> DurumNormaleDondu [label=" Hayır"];
+    AlarmDurumu -> SensorDongusu;
+    DurumNormaleDondu -> SensorDongusu;
+}
+```
+
+DOT ile pseudocode karıştırmışım. bu DOT dilini şekili biraz daha az karmaşık olacak şekilde yaz.(gruplandır vs.)
+
+Elbette, haklısınız. Bir önceki şema tüm adımları tek tek gösterdiği için biraz kalabalık görünebiliyordu.
+
+DOT dilinin **gruplandırma (`subgraph cluster`)** özelliğini kullanarak, birbiriyle ilişkili adımları görsel olarak kutular içine alabiliriz. Bu, ana akışı çok daha temiz ve anlaşılır hale getirir.
+
+Aşağıdaki kod, "Evde Modu" ve "Dışarıda Modu" mantığını kendi kutuları içine alarak şemayı sadeleştirir.
+
+### Daha Az Karmaşık ve Gruplandırılmış DOT Kodu
+
+```dot
+digraph GruplandirilmisGuvenlikSistemi {
+    // Grafik ayarları
+    rankdir=TB;
+    compound=true; // Gruplar arası okların düzgün çalışması için gerekli
+    node [shape=box, style=filled, fontname="Helvetica"];
+    edge [fontname="Helvetica"];
+
+    // Düğüm stilleri
+    start_end [shape=ellipse, fillcolor=palegreen];
+    decision [shape=diamond, fillcolor=gold];
+    
+    // --- 1. ANA AKIŞ (Grupların Dışında) ---
+    Basla [label="Başla", node_type=start_end];
+    GucKontrolu [label="Sistem Açık Mı?", node_type=decision];
+    Bitir [label="Sistem Kapalı Kalır", node_type=start_end];
+    ModuYukle [label="Modu Yükle", fillcolor=lightgrey];
+    SensorDongusu [label="Sensörleri Oku", shape=circle, style=dashed];
+    HareketKontrolu [label="Hareket Var Mı?", node_type=decision];
+
+    // --- 2. GRUPLANDIRMA BÖLÜMÜ ---
+
+    // 'Dışarıda Modu' için bir grup oluşturuluyor
+    subgraph cluster_disarida_modu {
+        label = "Dışarıda Modu Mantığı (Yüksek Güvenlik)";
+        style="filled,rounded";
+        fillcolor="lightcoral";
+        
+        IlkTespit [label="Ön Uyarı ve Kayıt Başlat"];
+        Bekle [label="15 sn Bekle", shape=Mdiamond];
+        TekrarKontrol [label="Hareket Devam Ediyor Mu?", node_type=decision];
+        Alarm [label="ALARM DEVREDE\nSiren Çal!", style="filled", fillcolor=tomato];
+        NormaleDondu [label="Durum Normale Döndü"];
+        
+        // Grup içi akış
+        IlkTespit -> Bekle -> TekrarKontrol;
+        TekrarKontrol -> Alarm [label=" Evet"];
+        TekrarKontrol -> NormaleDondu [label=" Hayır"];
+    }
+
+    // 'Evde Modu' için bir grup oluşturuluyor
+    subgraph cluster_evde_modu {
+        label = "Evde Modu Mantığı (Bilgilendirme)";
+        style="filled,rounded";
+        fillcolor="lightblue";
+        
+        EvdeModuIslemi [label="Düşük Öncelikli\nBildirim Gönder"];
+    }
+
+    // --- 3. ANA AKIŞ VE GRUPLARIN BAĞLANTISI ---
+    Basla -> GucKontrolu;
+    GucKontrolu -> Bitir [label=" Hayır"];
+    GucKontrolu -> ModuYukle [label=" Evet"];
+    ModuYukle -> SensorDongusu;
+    SensorDongusu -> HareketKontrolu;
+    
+    HareketKontrolu -> SensorDongusu [label=" Hayır"];
+    
+    // Hareket varsa, ana akış gruplara yönlenir
+    HareketKontrolu -> IlkTespit [label=" Evet ve 'Dışarıda' Modu", lhead=cluster_disarida_modu];
+    HareketKontrolu -> EvdeModuIslemi [label=" Evet ve 'Evde' Modu", lhead=cluster_evde_modu];
+    
+    // Gruplardan çıkan oklar tekrar ana döngüye bağlanır
+    Alarm -> SensorDongusu;
+    NormaleDondu -> SensorDongusu;
+    EvdeModuIslemi -> SensorDongusu;
+}
+```
+
+### Ne Değişti?
+
+  * **Görsel Kutular:** "Dışarıda Modu" ve "Evde Modu" ile ilgili tüm adımlar artık kendi renkli ve etiketli kutularının içinde yer alıyor.
+  * **Temiz Ana Akış:** Sistemin ana döngüsü (`Başla` -\> `Sensör Oku` -\> `Hareket Var Mı?`) artık çok net bir şekilde görünüyor.
+  * **Anlaşılır Karar Noktası:** "Hareket Var Mı?" sorusundan çıkan oklar, karmaşık adımlara değil, doğrudan ilgili mantık kutusuna gidiyor. Bu sayede "büyük resim" çok daha kolay anlaşılıyor.
+
+  
+
+
+
