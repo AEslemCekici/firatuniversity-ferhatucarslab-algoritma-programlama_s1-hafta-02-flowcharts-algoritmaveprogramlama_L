@@ -1,0 +1,66 @@
+digraph GruplandirilmisGuvenlikSistemi {
+    // Grafik ayarları
+    rankdir=TB;
+    compound=true; // Gruplar arası okların düzgün çalışması için gerekli
+    node [shape=box, style=filled, fontname="Helvetica"];
+    edge [fontname="Helvetica"];
+
+    // Düğüm stilleri
+    start_end [shape=ellipse, fillcolor=palegreen];
+    decision [shape=diamond, fillcolor=gold];
+    
+    // --- 1. ANA AKIŞ (Grupların Dışında) ---
+    Basla [label="Başla", node_type=start_end];
+    GucKontrolu [label="Sistem Açık Mı?", node_type=decision];
+    Bitir [label="Sistem Kapalı Kalır", node_type=start_end];
+    ModuYukle [label="Modu Yükle", fillcolor=lightgrey];
+    SensorDongusu [label="Sensörleri Oku", shape=circle, style=dashed];
+    HareketKontrolu [label="Hareket Var Mı?", node_type=decision];
+
+    // --- 2. GRUPLANDIRMA BÖLÜMÜ ---
+
+    // 'Dışarıda Modu' için bir grup oluşturuluyor
+    subgraph cluster_disarida_modu {
+        label = "Dışarıda Modu Mantığı (Yüksek Güvenlik)";
+        style="filled,rounded";
+        fillcolor="lightcoral";
+        
+        IlkTespit [label="Ön Uyarı ve Kayıt Başlat"];
+        Bekle [label="15 sn Bekle", shape=Mdiamond];
+        TekrarKontrol [label="Hareket Devam Ediyor Mu?", node_type=decision];
+        Alarm [label="ALARM DEVREDE\nSiren Çal!", style="filled", fillcolor=tomato];
+        NormaleDondu [label="Durum Normale Döndü"];
+        
+        // Grup içi akış
+        IlkTespit -> Bekle -> TekrarKontrol;
+        TekrarKontrol -> Alarm [label=" Evet"];
+        TekrarKontrol -> NormaleDondu [label=" Hayır"];
+    }
+
+    // 'Evde Modu' için bir grup oluşturuluyor
+    subgraph cluster_evde_modu {
+        label = "Evde Modu Mantığı (Bilgilendirme)";
+        style="filled,rounded";
+        fillcolor="lightblue";
+        
+        EvdeModuIslemi [label="Düşük Öncelikli\nBildirim Gönder"];
+    }
+
+    // --- 3. ANA AKIŞ VE GRUPLARIN BAĞLANTISI ---
+    Basla -> GucKontrolu;
+    GucKontrolu -> Bitir [label=" Hayır"];
+    GucKontrolu -> ModuYukle [label=" Evet"];
+    ModuYukle -> SensorDongusu;
+    SensorDongusu -> HareketKontrolu;
+    
+    HareketKontrolu -> SensorDongusu [label=" Hayır"];
+    
+    // Hareket varsa, ana akış gruplara yönlenir
+    HareketKontrolu -> IlkTespit [label=" Evet ve 'Dışarıda' Modu", lhead=cluster_disarida_modu];
+    HareketKontrolu -> EvdeModuIslemi [label=" Evet ve 'Evde' Modu", lhead=cluster_evde_modu];
+    
+    // Gruplardan çıkan oklar tekrar ana döngüye bağlanır
+    Alarm -> SensorDongusu;
+    NormaleDondu -> SensorDongusu;
+    EvdeModuIslemi -> SensorDongusu;
+}
